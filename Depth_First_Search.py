@@ -15,7 +15,7 @@ def dfs_rec(grid, visited, r, c, result):
 
         # Check if the new position is within bounds, not visited, and not an obstacle
         if 0 <= nr < rows and 0 <= nc < cols and not visited[nr][nc] and grid[nr][nc] == 0:
-            print(f"Moving {direction} to ({nr}, {nc})")
+            print(f"Moving {direction} to ({nr}, {nc})\n")
             dfs_rec(grid, visited, nr, nc, result)
 
 
@@ -32,8 +32,8 @@ def dfs(grid, start):
 if __name__ == "__main__":
     # Define a grid where 0 is a path and 1 is an obstacle
     grid = [
-        [0, 1, 0, 0, 0],
-        [0, 1, 0, 1, 0],
+        [0, 0, 0, 1, 0],
+        [0, 0, 0, 1, 0],
         [0, 0, 0, 1, 0],
         [1, 1, 0, 1, 0],
         [0, 0, 0, 0, 0]

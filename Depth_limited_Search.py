@@ -36,8 +36,8 @@ def dls(grid, start, limit):
 if __name__ == "__main__":
     # Define a grid where 0 is a path and 1 is an obstacle
     grid = [
-        [0, 1, 0, 0, 0],
-        [0, 1, 0, 1, 0],
+        [0, 0, 0, 1, 0],
+        [0, 0, 0, 1, 0],
         [0, 0, 0, 1, 0],
         [1, 1, 0, 1, 0],
         [0, 0, 0, 0, 0]
