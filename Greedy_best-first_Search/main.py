@@ -9,7 +9,7 @@ time_seconds = 0.5
 
 class TreeVisualizer:
     start_count = 0
-
+    
     def __init__(self, root):
         self.root = root
         self.root.title("Greedy Best-First Search Visualization")

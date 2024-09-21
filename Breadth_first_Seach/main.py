@@ -6,12 +6,13 @@ from bfs import BFSLogic
 
 NODE_RADIUS = 20
 
-
+time_seconds = 0.5
 class TreeVisualizer:
     start_count = 0
+    
     def __init__(self, root):
         self.root = root
-        self.root.title("BFS Visualization")
+        self.root.title("Breadth First Seach Visualization")
 
         # Set up the logic backend
         self.logic = BFSLogic(
@@ -86,7 +87,7 @@ class TreeVisualizer:
         self.logic.node_colors[node] = color
         self.canvas.itemconfig(self.nodes[node], fill=color)
         self.root.update()
-        time.sleep(1)
+        time.sleep(time_seconds)
 
     def show_goal_message(self, goal_node):
         # Show a message when the goal node is reached.

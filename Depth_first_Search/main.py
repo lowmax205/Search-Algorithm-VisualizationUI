@@ -5,13 +5,14 @@ import time
 from dfs import DFSLogic
 
 NODE_RADIUS = 20
-
+time_seconds = 0.5
 
 class TreeVisualizer:
     start_count = 0
+    
     def __init__(self, root):
         self.root = root
-        self.root.title("DFS Visualization")
+        self.root.title("Depth First Search Visualization")
 
         # Set up the logic backend
         self.logic = DFSLogic(
