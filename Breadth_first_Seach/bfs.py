@@ -1,51 +1,59 @@
-from collections import deque
+# Define constants for colors
+COLOR_VISITED = 'green'
+COLOR_VISITING = 'yellow'
+COLOR_NOT_VISITED = 'white'
+COLOR_GOAL = 'red'
 
-# Directions for moving up, down, left, and right with labels
-DIRECTIONS = [(0, 1, 'right'), (1, 0, 'down'), (0, -1, 'left'), (-1, 0, 'up')]
+class BFSLogic:
+    def __init__(self, canvas, update_node_color, show_goal_message):
+        self.canvas = canvas
+        self.update_node_color = update_node_color
+        self.show_goal_message = show_goal_message
+        self.node_colors = {}
 
-def bfs(grid, start):
-    rows, cols = len(grid), len(grid[0])
-    visited = [[False] * cols for _ in range(rows)]
-    result = []
+    def set_positions(self, positions):
+        # Set node positions and initialize node colors.
+        self.positions = positions
+        self.node_colors = {node: COLOR_NOT_VISITED for node in self.positions}
 
-    # Create a queue for BFS, start with the starting point
-    queue = deque([start])
+    def reset_colors(self):
+        # Reset all node colors to not visited.
+        for node in self.node_colors:
+            self.update_node_color(node, COLOR_NOT_VISITED)
 
-    # Mark the start cell as visited
-    visited[start[0]][start[1]] = True
-    result.append(start)
+    def bfs(self, start_node, goal_node=None):
+        # Perform BFS traversal and visualize the process, stopping if the goal node is found.
+        queue = [start_node]
+        visited = set()
 
-    # Loop until the queue is empty
-    while queue:
-        # Dequeue a point from the queue
-        r, c = queue.popleft()
-        print(f"Visiting node ({r}, {c})\n")
+        while queue:
+            current_node = queue.pop(0)
 
-        # Explore all four possible directions
-        for dr, dc, direction in DIRECTIONS:
-            nr, nc = r + dr, c + dc
+            if current_node not in visited:
+                self.update_node_color(current_node, COLOR_VISITING)
 
-            # Check if the new position is within bounds, not visited, and not an obstacle
-            if 0 <= nr < rows and 0 <= nc < cols and not visited[nr][nc] and grid[nr][nc] == 0:
-                print(f"Moving {direction} to ({nr}, {nc})")
-                queue.append((nr, nc))
-                visited[nr][nc] = True
-                result.append((nr, nc))
+            if current_node == goal_node:
+                self.update_node_color(current_node, COLOR_GOAL)  # Mark goal node as red
+                self.show_goal_message(goal_node)
+                return
 
-    return result
+            visited.add(current_node)
+            self.update_node_color(current_node, COLOR_VISITED)
 
-if __name__ == "__main__":
-    # Define a grid where 0 is a path and 1 is an obstacle
-    grid = [
-        [0, 0, 0, 1, 0],
-        [0, 0, 0, 1, 0],
-        [0, 0, 0, 1, 0],
-        [1, 1, 0, 1, 0],
-        [0, 0, 0, 0, 0]
-    ]
+            for neighbor in self.get_neighbors(current_node):
+                if neighbor not in visited and neighbor not in queue:
+                    queue.append(neighbor)
+                    self.update_node_color(neighbor, COLOR_VISITING)
 
-    start = (0, 0)  # Starting point for BFS
-
-    print("BFS from start:", start)
-    result = bfs(grid, start)
-    print("\nFinal result:", result)
+    def get_neighbors(self, node):
+        # Define neighbors for each node as a simple adjacency list.
+        neighbors = {
+            'A': ['B', 'C'],
+            'B': ['D', 'E'],
+            'C': ['F', 'G'],
+            'D': [],
+            'E': [],
+            'F': [],
+            'G': []
+        }
+        return neighbors.get(node, [])
