@@ -6,10 +6,12 @@ from bfs import BFSLogic
 
 NODE_RADIUS = 20
 
+
 class TreeVisualizer:
+    start_count = 0
     def __init__(self, root):
         self.root = root
-        self.root.title("BFS Tree Visualization")
+        self.root.title("BFS Visualization")
 
         # Set up the logic backend
         self.logic = BFSLogic(
@@ -91,6 +93,7 @@ class TreeVisualizer:
         messagebox.showinfo("Goal Reached", f"Goal node '{goal_node}' reached!")
 
     def create_input_ui(self):
+        
         # Create input fields and buttons in the main window.
         tk.Label(self.main_frame, text="Start Node:").grid(row=1, column=0, padx=5, pady=5)
         self.start_node_entry = tk.Entry(self.main_frame, width=5)
@@ -110,8 +113,10 @@ class TreeVisualizer:
 
     def start_bfs(self):
         # Handle the start BFS button click.
-        self.logic.reset_colors()
-
+        print("START COUNT: ", TreeVisualizer.start_count)
+        if TreeVisualizer.start_count != 0:
+            self.logic.reset_colors()
+        TreeVisualizer.start_count += 1
         start_node = self.start_node_entry.get().strip().upper()
         goal_node = self.goal_node_entry.get().strip().upper()
 
@@ -122,7 +127,8 @@ class TreeVisualizer:
         if goal_node and not self.validate_input(goal_node):
             messagebox.showerror("Error", "Invalid goal node. Please enter a valid node (A-G) or leave blank.")
             return
-
+        
+        
         self.logic.bfs(start_node, goal_node)
 
     def run(self):

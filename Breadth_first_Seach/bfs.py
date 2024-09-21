@@ -19,6 +19,7 @@ class BFSLogic:
     def reset_colors(self):
         # Reset all node colors to not visited.
         for node in self.node_colors:
+            print("Resetting Node ",node)
             self.update_node_color(node, COLOR_NOT_VISITED)
 
     def bfs(self, start_node, goal_node=None):
@@ -30,19 +31,23 @@ class BFSLogic:
             current_node = queue.pop(0)
 
             if current_node not in visited:
+                print("Visiting: ",current_node)
                 self.update_node_color(current_node, COLOR_VISITING)
 
             if current_node == goal_node:
+                print("Goal: ",current_node)
                 self.update_node_color(current_node, COLOR_GOAL)  # Mark goal node as red
                 self.show_goal_message(goal_node)
                 return
 
             visited.add(current_node)
+            print("Visited: ",current_node)
             self.update_node_color(current_node, COLOR_VISITED)
 
             for neighbor in self.get_neighbors(current_node):
                 if neighbor not in visited and neighbor not in queue:
                     queue.append(neighbor)
+                    print("Visiting neigbhor: ",neighbor)
                     self.update_node_color(neighbor, COLOR_VISITING)
 
     def get_neighbors(self, node):
