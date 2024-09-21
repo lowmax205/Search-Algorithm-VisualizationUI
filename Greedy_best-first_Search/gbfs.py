@@ -1,62 +1,84 @@
-import heapq
+import time
 
-# Directions for moving up, down, left, and right with labels
-DIRECTIONS = [(0, 1, 'right'), (1, 0, 'down'), (0, -1, 'left'), (-1, 0, 'up')]
+# Define constants for colors
+COLOR_VISITED = 'green'
+COLOR_VISITING = 'yellow'
+COLOR_NOT_VISITED = 'white'
+COLOR_GOAL = 'red'
 
-# Heuristic function (Manhattan distance)
-def heuristic(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+class GBFSLogic:
+    def __init__(self, canvas, update_node_color, show_goal_message):
+        self.canvas = canvas
+        self.update_node_color = update_node_color
+        self.show_goal_message = show_goal_message
+        self.node_colors = {}
+        self.heuristics = {}  # Holds heuristic values for each node
 
-def greedy_best_first_search(grid, start, goal):
-    rows, cols = len(grid), len(grid[0])
-    visited = [[False] * cols for _ in range(rows)]
-    pq = [(heuristic(start, goal), start)]  # Priority queue with (heuristic value, node)
-    
-    while pq:
-        # Get the node with the smallest heuristic value
-        current_heuristic, (r, c) = heapq.heappop(pq)
+    def set_positions(self, positions):
+        # Set initial positions and colors for nodes.
+        self.positions = positions
+        self.node_colors = {node: COLOR_NOT_VISITED for node in positions}
 
-        # If the goal is reached, return the node
-        if (r, c) == goal:
-            print(f"Goal reached at {goal}")
-            return (r, c)
+    def set_heuristics(self, heuristics):
+        # Set heuristic values for nodes.
+        self.heuristics = heuristics
 
-        # Skip already visited nodes
-        if visited[r][c]:
-            continue
+    def reset_colors(self):
+        # Reset all node colors to not visited.
+        for node in self.node_colors:
+            self.update_node_color(node, COLOR_NOT_VISITED)
 
-        # Mark the current node as visited
-        visited[r][c] = True
-        print(f"Expanding node ({r}, {c}) with heuristic {current_heuristic}")
+    def greedy_bfs(self, start_node, goal_node=None):
+        # Perform Greedy Best-First Search and visualize the process.
+        open_list = [start_node]
+        visited = set()
 
-        # Explore neighbors
-        for dr, dc, direction in DIRECTIONS:
-            nr, nc = r + dr, c + dc
+        while open_list:
+            # Sort open_list based on heuristic values
+            open_list.sort(key=lambda node: self.heuristics.get(node, float('inf')))
+            current_node = open_list.pop(0)
 
-            # Check if the new position is within bounds, not visited, and not an obstacle
-            if 0 <= nr < rows and 0 <= nc < cols and not visited[nr][nc] and grid[nr][nc] == 0:
-                new_heuristic = heuristic((nr, nc), goal)
-                print(f"Moving {direction} to ({nr}, {nc}) with heuristic {new_heuristic}\n")
-                heapq.heappush(pq, (new_heuristic, (nr, nc)))
+            # Mark as visiting
+            if current_node not in visited:
+                print("Visiting: ", current_node)
+                self.update_node_color(current_node, COLOR_VISITING)
 
-    return None  # If the goal is not reachable
+            # Check if goal is reached
+            if current_node == goal_node:
+                print("Goal: ", current_node)
+                self.update_node_color(current_node, COLOR_GOAL)
+                self.show_goal_message(goal_node)
+                return
 
-if __name__ == "__main__":
-    # Define a grid where 0 is a path and 1 is an obstacle
-    grid = [
-        [0, 1, 0, 0, 0],
-        [0, 1, 0, 1, 0],
-        [0, 0, 0, 1, 0],
-        [1, 1, 0, 1, 0],
-        [0, 0, 0, 0, 0]
-    ]
+            # Mark node as visited
+            visited.add(current_node)
+            print("Visited: ", current_node)
+            self.update_node_color(current_node, COLOR_VISITED)
 
-    start = (0, 0)  # Starting point for GBFS
-    goal = (4, 4)   # Goal point
+            # Add neighbors based on adjacency
+            for neighbor in self.get_neighbors(current_node):
+                if neighbor not in visited and neighbor not in open_list:
+                    open_list.append(neighbor)
+                    print("Visiting neighbor: ", neighbor)
+                    self.update_node_color(neighbor, COLOR_VISITING)
 
-    print(f"Greedy Best-First Search from {start} to {goal}:")
-    result = greedy_best_first_search(grid, start, goal)
-    if result is not None:
-        print(f"\nGoal {goal} found from {start}.")
-    else:
-        print(f"\nGoal {goal} could not be reached from {start}.")
+    def get_neighbors(self, node):
+        # Define neighbors for each node as a simple adjacency list.
+        neighbors = {
+            'A': ['B', 'C'],
+            'B': ['D', 'E'],
+            'C': ['F', 'G'],
+            'D': ['H', 'I'],
+            'E': [],
+            'F': ['J', 'K'],
+            'G': [],
+            'H': ['L'],
+            'I': ['M'],
+            'J': ['N'],
+            'K': [],
+            'L': [],
+            'M': [],
+            'N': []
+        }
+
+        return neighbors.get(node, [])
