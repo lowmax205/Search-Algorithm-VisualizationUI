@@ -1,46 +1,64 @@
-# Directions for moving up, down, left, and right with labels
-DIRECTIONS = [(0, 1, 'right'), (1, 0, 'down'), (0, -1, 'left'), (-1, 0, 'up')]
+# Define constants for colors
+COLOR_VISITED = 'green'
+COLOR_VISITING = 'yellow'
+COLOR_NOT_VISITED = 'white'
+COLOR_GOAL = 'red'
 
-def dfs_rec(grid, visited, r, c, result):
-    rows, cols = len(grid), len(grid[0])
+class DFSLogic:
+    def __init__(self, canvas, update_node_color, show_goal_message):
+        self.canvas = canvas
+        self.update_node_color = update_node_color
+        self.show_goal_message = show_goal_message
+        self.node_colors = {}
 
-    # Mark the current node as visited
-    visited[r][c] = True
-    print(f"Visiting node ({r}, {c})")
-    result.append((r, c))  # Add the current node to the result list
+    def set_positions(self, positions):
+        # Set node positions and initialize node colors.
+        self.positions = positions
+        self.node_colors = {node: COLOR_NOT_VISITED for node in self.positions}
 
-    # Explore all four possible directions
-    for dr, dc, direction in DIRECTIONS:
-        nr, nc = r + dr, c + dc
+    def reset_colors(self):
+        # Reset all node colors to not visited.
+        for node in self.node_colors:
+            print("Resetting Node ",node)
+            self.update_node_color(node, COLOR_NOT_VISITED)
 
-        # Check if the new position is within bounds, not visited, and not an obstacle
-        if 0 <= nr < rows and 0 <= nc < cols and not visited[nr][nc] and grid[nr][nc] == 0:
-            print(f"Moving {direction} to ({nr}, {nc})\n")
-            dfs_rec(grid, visited, nr, nc, result)
+    def dfs(self, start_node, goal_node=None):
+        stack = [start_node]  # Use a stack for DFS
+        visited = set()
 
+        while stack:
+            current_node = stack.pop()  # Pop from the top of the stack
 
-def dfs(grid, start):
-    rows, cols = len(grid), len(grid[0])
-    visited = [[False] * cols for _ in range(rows)]
-    result = []  # Initialize the result list
+            if current_node not in visited:
+                print("Visiting: ", current_node)
+                self.update_node_color(current_node, COLOR_VISITING)
 
-    # Call the recursive DFS function
-    dfs_rec(grid, visited, start[0], start[1], result)
-    return result  # Return the result list
+            if current_node == goal_node:
+                print("Goal: ", current_node)
+                self.update_node_color(current_node, COLOR_GOAL)
+                self.show_goal_message(goal_node)
+                return
 
+            visited.add(current_node)
+            print("Visited: ", current_node)
+            self.update_node_color(current_node, COLOR_VISITED)
 
-if __name__ == "__main__":
-    # Define a grid where 0 is a path and 1 is an obstacle
-    grid = [
-        [0, 0, 0, 1, 0],
-        [0, 0, 0, 1, 0],
-        [0, 0, 0, 1, 0],
-        [1, 1, 0, 1, 0],
-        [0, 0, 0, 0, 0]
-    ]
+            # Reverse the order of neighbors before adding to the stack
+            for neighbor in reversed(self.get_neighbors(current_node)):
+                if neighbor not in visited and neighbor not in stack:
+                    stack.append(neighbor)  # Push onto the stack
+                    print("Visiting neighbor: ", neighbor)
+                    self.update_node_color(neighbor, COLOR_VISITING)
 
-    start = (0, 0)  # Starting point for DFS
-
-    print("DFS from start:", start)
-    result = dfs(grid, start)
-    print("\nFinal result:", result)
+    def get_neighbors(self, node):
+        # Define neighbors for each node as a simple adjacency list.
+        neighbors = {
+            'A': ['B', 'C'],
+            'B': ['D', 'E'],
+            'C': ['F', 'G'],
+            'D': [],
+            'E': [],
+            'F': [],
+            'G': []
+        }
+        return neighbors.get(node, [])
