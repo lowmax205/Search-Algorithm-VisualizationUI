@@ -22,5 +22,5 @@ Uniformed search algorithms are a category of algorithms that explore the search
 
 ### Prerequisites
 
-- [Python](https://www.python.org/downloads/)
+- - ![Python](https://img.icons8.com/color/48/000000/python.png) [Python](https://www.python.org/downloads/)
 - Necessary libraries (if applicable)
