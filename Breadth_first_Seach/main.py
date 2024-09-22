@@ -104,7 +104,7 @@ class TreeVisualizer:
         self.goal_node_entry = tk.Entry(self.main_frame, width=5)
         self.goal_node_entry.grid(row=2, column=1, padx=5, pady=5)
 
-        self.start_button = tk.Button(self.main_frame, text="Start BFS", command=self.start_bfs)
+        self.start_button = tk.Button(self.main_frame, text="Start", command=self.start_bfs)
         self.start_button.grid(row=3, column=0, columnspan=2, pady=10)
 
     def validate_input(self, node):

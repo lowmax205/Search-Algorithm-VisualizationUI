@@ -87,7 +87,7 @@ class TreeVisualizer:
         self.logic.node_colors[node] = color
         self.canvas.itemconfig(self.nodes[node], fill=color)
         self.root.update()
-        time.sleep(1)
+        time.sleep(time_seconds)
 
     def show_goal_message(self, goal_node):
         # Show a message when the goal node is reached.
