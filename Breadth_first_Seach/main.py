@@ -5,8 +5,8 @@ import time
 from bfs import BFSLogic
 
 NODE_RADIUS = 20
-
 time_seconds = 0.5
+
 class TreeVisualizer:
     start_count = 0
     
