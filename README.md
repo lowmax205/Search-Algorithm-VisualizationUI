@@ -16,7 +16,7 @@ Uniformed search algorithms are a category of algorithms that explore the search
 
 ## Components
 
-1. **Algorithm Implementation**: Code for BFS and/or DFS to demonstrate their functionality.
+1. **Algorithm Implementation**: Code for BFS, DFS, DLS, GBFS, IDS, UCS and A* Search to demonstrate their functionality.
 2. **Visual Representation**: Graphical interface to visualize the search process.
 3. **Testing Framework**: Tools to validate the algorithm's efficiency and correctness.
 
