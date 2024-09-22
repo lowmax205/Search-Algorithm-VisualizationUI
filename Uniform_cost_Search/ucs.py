@@ -1,59 +1,77 @@
-import heapq
+import heapq  # For priority queue implementation
 
-# Directions for moving up, down, left, and right
-DIRECTIONS = [(0, 1, 'right'), (1, 0, 'down'), (0, -1, 'left'), (-1, 0, 'up')]
+# Define constants for colors
+COLOR_VISITED = 'green'
+COLOR_VISITING = 'yellow'
+COLOR_NOT_VISITED = 'white'
+COLOR_GOAL = 'red'
 
-# Uniform-Cost Search function
-def uniform_cost_search(grid, start, goal):
-    rows, cols = len(grid), len(grid[0])
-    # Priority queue to store (cost, node)
-    pq = [(0, start)]  # (cost, (row, col)) pair
-    visited = [[False] * cols for _ in range(rows)]
-    cost_to_node = {start: 0}
+class USC_Logic:
+    def __init__(self, canvas, update_node_color, show_goal_message):
+        self.canvas = canvas
+        self.update_node_color = update_node_color
+        self.show_goal_message = show_goal_message
+        self.node_colors = {}
 
-    while pq:
-        current_cost, (r, c) = heapq.heappop(pq)
+    def set_positions(self, positions):
+        # Set node positions and initialize node colors.
+        self.positions = positions
+        self.node_colors = {node: COLOR_NOT_VISITED for node in self.positions}
 
-        # If we reach the goal node, return the cost
-        if (r, c) == goal:
-            print(f"Goal reached at {goal} with cost {current_cost}")
-            return current_cost
+    def reset_colors(self):
+        # Reset all node colors to not visited.
+        for node in self.node_colors:
+            print("Resetting Node", node)
+            self.update_node_color(node, COLOR_NOT_VISITED)
 
-        # If the node has been visited, skip it
-        if visited[r][c]:
-            continue
+    def ucs(self, start_node, goal_node=None):
+        # Perform UCS traversal and visualize the process, stopping if the goal node is found.
+        priority_queue = [(0, start_node)]  # Priority queue with (cost, node)
+        visited = set()
+        costs = {start_node: 0}  # Track the lowest cost to each node
 
-        # Mark the current node as visited
-        visited[r][c] = True
-        print(f"Expanding node ({r}, {c}) with current cost {current_cost}")
+        while priority_queue:
+            current_cost, current_node = heapq.heappop(priority_queue)  # Pop the least-cost node
 
-        # Explore neighbors
-        for dr, dc, direction in DIRECTIONS:
-            nr, nc = r + dr, c + dc
+            if current_node not in visited:
+                print("Visiting:", current_node, "with cost:", current_cost)
+                self.update_node_color(current_node, COLOR_VISITING)
 
-            # Check if the new position is within bounds, not visited, and not an obstacle
-            if 0 <= nr < rows and 0 <= nc < cols and not visited[nr][nc] and grid[nr][nc] == 0:
-                new_cost = current_cost + 1  # Uniform cost of 1 for each move
-                if new_cost < cost_to_node.get((nr, nc), float('inf')):
-                    cost_to_node[(nr, nc)] = new_cost
-                    heapq.heappush(pq, (new_cost, (nr, nc)))
-                    print(f"Moving {direction} to ({nr}, {nc}) with new cost {new_cost}\n")
+            if current_node == goal_node:
+                print("Goal:", current_node, "reached with cost:", current_cost)
+                self.update_node_color(current_node, COLOR_GOAL)  # Mark goal node as red
+                self.show_goal_message(goal_node)
+                return
 
-    return float('inf')  # If no path is found to the goal
+            visited.add(current_node)
+            print("Visited:", current_node)
+            self.update_node_color(current_node, COLOR_VISITED)
 
-if __name__ == "__main__":
-    # Define a grid where 0 is a path and 1 is an obstacle
-    grid = [
-        [0, 0, 0, 1, 0],
-        [0, 0, 0, 1, 0],
-        [0, 0, 0, 1, 0],
-        [1, 1, 0, 1, 0],
-        [0, 0, 0, 0, 0]
-    ]
-
-    start = (0, 0)  # Starting point for UCS
-    goal = (4, 4)   # Goal point
-
-    print(f"Uniform-Cost Search from {start} to {goal}:")
-    result = uniform_cost_search(grid, start, goal)
-    print(f"\nCost to reach goal {goal} from {start}: {result}")
+            # Explore neighbors and update the priority queue with new costs
+            for neighbor, cost in self.get_neighbors(current_node):
+                new_cost = current_cost + cost
+                if neighbor not in visited or new_cost < costs.get(neighbor, float('inf')):
+                    costs[neighbor] = new_cost
+                    heapq.heappush(priority_queue, (new_cost, neighbor))
+                    print("Adding neighbor:", neighbor, "with updated cost:", new_cost)
+                    self.update_node_color(neighbor, COLOR_VISITING)
+                    
+    def get_neighbors(self, node):
+        # Define neighbors for each node with costs as a tuple (neighbor, cost).
+        neighbors = {
+            'A': [('B', 1), ('C', 2)],
+            'B': [('D', 4), ('E', 1)],
+            'C': [('F', 3), ('G', 2)],
+            'D': [('H', 2), ('I', 1)],
+            'E': [],
+            'F': [('J', 2), ('K', 1)],
+            'G': [],
+            'H': [('L', 3)],
+            'I': [('M', 4)],
+            'J': [('N', 2)],
+            'K': [],
+            'L': [],
+            'M': [],
+            'N': []
+        }
+        return neighbors.get(node, [])

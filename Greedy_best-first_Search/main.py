@@ -152,7 +152,7 @@ class TreeVisualizer:
 
     def validate_input(self, node):
         # Validate if the node input is within the valid range.
-        valid_nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
+        valid_nodes = set(self.positions.keys())
         return node in valid_nodes
 
     def start_function(self):

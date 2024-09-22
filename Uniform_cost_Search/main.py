@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import math
 import time
-from dls import DFS_DLSLogic
+from ucs import USC_Logic
 
 NODE_RADIUS = 20
 time_seconds = 0.5
@@ -12,10 +12,10 @@ class TreeVisualizer:
     
     def __init__(self, root):
         self.root = root
-        self.root.title("Depth Limited Search Visualization")
+        self.root.title("Uniform Cost Search Visualization")
 
         # Set up the logic backend
-        self.logic = DFS_DLSLogic(
+        self.logic = USC_Logic(
             canvas=None,
             update_node_color=self.update_node_color,
             show_goal_message=self.show_goal_message
@@ -94,17 +94,17 @@ class TreeVisualizer:
 
     def update_node_color(self, node, color):
         # Update the color of a specified node.
-        self.logic.node_colors[node] = color
-        self.canvas.itemconfig(self.nodes[node], fill=color)
-        self.root.update()
-        time.sleep(time_seconds)
+        if node in self.nodes:
+            self.logic.node_colors[node] = color
+            self.canvas.itemconfig(self.nodes[node], fill=color)
+            self.root.update()
+            time.sleep(time_seconds)
 
     def show_goal_message(self, goal_node):
         # Show a message when the goal node is reached.
         messagebox.showinfo("Goal Reached", f"Goal node '{goal_node}' reached!")
 
     def create_input_ui(self):
-        
         # Create input fields and buttons in the main window.
         tk.Label(self.main_frame, text="Start Node:").grid(row=1, column=0, padx=5, pady=5)
         self.start_node_entry = tk.Entry(self.main_frame, width=5)
@@ -124,7 +124,7 @@ class TreeVisualizer:
 
     def start_function(self):
         # Handle the start button click.
-        print("START COUNT: ", TreeVisualizer.start_count)
+        print("START COUNT:", TreeVisualizer.start_count)
         if TreeVisualizer.start_count != 0:
             self.logic.reset_colors()
         TreeVisualizer.start_count += 1
@@ -132,15 +132,14 @@ class TreeVisualizer:
         goal_node = self.goal_node_entry.get().strip().upper()
 
         if not self.validate_input(start_node):
-            messagebox.showerror("Error", "Invalid start node. Please enter a valid node (A-G).")
+            messagebox.showerror("Error", "Invalid start node. Please enter a valid node.")
             return
 
         if goal_node and not self.validate_input(goal_node):
-            messagebox.showerror("Error", "Invalid goal node. Please enter a valid node (A-G) or leave blank.")
+            messagebox.showerror("Error", "Invalid goal node. Please enter a valid node or leave blank.")
             return
-        
-        
-        self.logic.dls(start_node, goal_node)
+
+        self.logic.ucs(start_node, goal_node)
 
     def run(self):
         # Run the main application.
