@@ -26,19 +26,26 @@ class TreeVisualizer:
         self.main_frame.pack(pady=10)
 
         # Create the canvas for visualizing the tree
-        self.canvas = tk.Canvas(self.main_frame, width=500, height=400)
+        self.canvas = tk.Canvas(self.main_frame, width=600, height=500)
         self.canvas.grid(row=0, column=0, columnspan=2, pady=10)
         self.logic.canvas = self.canvas  # Link canvas to logic
 
         # Define node positions and set them in the logic
         self.positions = {
-            'A': (250, 50),
-            'B': (150, 150),
-            'C': (350, 150),
-            'D': (100, 250),
-            'E': (200, 250),
-            'F': (300, 250),
-            'G': (400, 250)
+            'A': (300, 50),
+            'B': (200, 150),
+            'C': (400, 150),
+            'D': (150, 250),
+            'E': (250, 250),
+            'F': (350, 250),
+            'G': (450, 250),
+            'H': (100, 350),
+            'I': (200, 350),
+            'J': (300, 350),
+            'K': (400, 350),
+            'L': (150, 450),
+            'M': (250, 450),
+            'N': (350, 450)
         }
         self.logic.set_positions(self.positions)
 
@@ -61,7 +68,10 @@ class TreeVisualizer:
         edges = [
             ('A', 'B'), ('A', 'C'),
             ('B', 'D'), ('B', 'E'),
-            ('C', 'F'), ('C', 'G')
+            ('C', 'F'), ('C', 'G'),
+            ('D', 'H'), ('D', 'I'),
+            ('F', 'J'), ('F', 'K'),
+            ('H', 'L'), ('I', 'M'), ('J', 'N')
         ]
         for start, end in edges:
             self.create_line(*self.positions[start], *self.positions[end], NODE_RADIUS)
