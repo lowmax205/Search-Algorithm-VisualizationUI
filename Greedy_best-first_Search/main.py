@@ -5,7 +5,7 @@ import time
 from gbfs import GBFSLogic
 
 NODE_RADIUS = 20
-time_seconds = 0.5
+time_seconds = 5
 
 class TreeVisualizer:
     start_count = 0
@@ -51,9 +51,9 @@ class TreeVisualizer:
 
         # Set heuristic values for nodes
         self.original_heuristics = {
-            'A': 3,
-            'B': 2,
-            'C': 5,
+            'A': 0,
+            'B': 5,
+            'C': 2,
             'D': 6,
             'E': 4,
             'F': 4,
