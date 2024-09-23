@@ -14,7 +14,7 @@ class TreeVisualizer:
         self.root = root
         self.root.title("Uniform Cost Search Visualization")
 
-        # Set up the logic backend with the update_cost_display function added
+        # Set up the logic backend
         self.logic = USC_Logic(
             canvas=None,
             update_node_color=self.update_node_color,
@@ -51,9 +51,9 @@ class TreeVisualizer:
         self.logic.set_positions(self.positions)
 
         # Draw nodes and edges
+        self.cost_labels = {}
         self.nodes = {}
         self.edges = []
-        self.cost_labels = {}  # Dictionary to hold cost text objects
         self.draw_nodes()
         self.draw_edges()
 
@@ -65,6 +65,11 @@ class TreeVisualizer:
         for node, (x, y) in self.positions.items():
             self.nodes[node] = self.create_circle(x, y, NODE_RADIUS, node)
             self.cost_labels[node] = self.canvas.create_text(x, y + NODE_RADIUS + 10, text="", font=('Arial', 10))
+
+    def update_cost_display(self, node, cost):
+            # Update the displayed cost value below a node.
+            if node in self.cost_labels:
+                self.canvas.itemconfig(self.cost_labels[node], text=str(cost))
 
     def draw_edges(self):
         # Draw edges between nodes.
@@ -102,11 +107,6 @@ class TreeVisualizer:
             self.canvas.itemconfig(self.nodes[node], fill=color)
             self.root.update()
             time.sleep(time_seconds)
-
-    def update_cost_display(self, node, cost):
-        # Update the displayed cost value below a node.
-        if node in self.cost_labels:
-            self.canvas.itemconfig(self.cost_labels[node], text=str(cost))
 
     def show_goal_message(self, goal_node):
         # Show a message when the goal node is reached.

@@ -24,12 +24,11 @@ class USC_Logic:
     def reset_colors(self):
         # Reset all node colors to not visited.
         for node in self.node_colors:
-            print("Resetting Node", node)
+            print("Resetting Node ",node)
             self.update_node_color(node, COLOR_NOT_VISITED)
             self.update_cost_display(node, "")  # Clear the cost display when resetting
 
     def ucs(self, start_node, goal_node=None):
-        # Perform UCS traversal and visualize the process, stopping if the goal node is found.
         priority_queue = [(0, start_node)]  # Priority queue with (cost, node)
         visited = set()
         costs = {start_node: 0}  # Track the lowest cost to each node
@@ -44,14 +43,14 @@ class USC_Logic:
                 self.update_cost_display(current_node, current_cost)  # Update the displayed cost
 
             if current_node == goal_node:
-                print("Goal:", current_node, "reached with cost:", current_cost)
-                self.update_node_color(current_node, COLOR_GOAL)  # Mark goal node as red
+                print("Goal: ", current_node, "reached with cost:", current_cost)
+                self.update_node_color(current_node, COLOR_GOAL)
                 self.update_cost_display(current_node, current_cost)  # Update the displayed cost
                 self.show_goal_message(goal_node)
                 return
 
             visited.add(current_node)
-            print("Visited:", current_node)
+            print("Visited: ", current_node)
             self.update_node_color(current_node, COLOR_VISITED)
 
             # Explore neighbors and update the priority queue with new costs
@@ -61,7 +60,7 @@ class USC_Logic:
                     costs[neighbor] = new_cost
                     self.node_costs[neighbor] = new_cost  # Update the cost for visualization
                     heapq.heappush(priority_queue, (new_cost, neighbor))
-                    print("Adding neighbor:", neighbor, "with updated cost:", new_cost)
+                    print("Adding neighbor: ", neighbor, "with updated cost:", new_cost)
                     self.update_node_color(neighbor, COLOR_VISITING)
                     self.update_cost_display(neighbor, new_cost)  # Update the displayed cost
 

@@ -41,14 +41,12 @@ class GBFSLogic:
                 print("Visiting: ", current_node)
                 self.update_node_color(current_node, COLOR_VISITING)
 
-            # Check if goal is reached
             if current_node == goal_node:
                 print("Goal: ", current_node)
                 self.update_node_color(current_node, COLOR_GOAL)
                 self.show_goal_message(goal_node)
                 return
 
-            # Mark node as visited
             visited.add(current_node)
             print("Visited: ", current_node)
             self.update_node_color(current_node, COLOR_VISITED)
@@ -61,7 +59,7 @@ class GBFSLogic:
                     self.update_node_color(neighbor, COLOR_VISITING)
 
     def get_neighbors(self, node):
-        # Define neighbors for each node as a simple adjacency list.
+        # Define neighbors for each node.
         neighbors = {
             'A': ['B', 'C'],
             'B': ['D', 'E'],

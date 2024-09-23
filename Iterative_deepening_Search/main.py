@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import math
 import time
-from ids import IDS_Logic  # Import the IDS_Logic class
+from ids import IDS_Logic
 
 NODE_RADIUS = 20
 time_seconds = 0.5
@@ -76,7 +76,10 @@ class TreeVisualizer:
 
     def create_circle(self, x, y, r, text):
         # Create a circle with text inside and return the canvas object.
-        circle = self.canvas.create_oval(x - r, y - r, x + r, y + r, outline="black", width=2, fill=self.logic.node_colors[text])
+        circle = self.canvas.create_oval(
+            x - r, y - r, x + r, y + r,
+            outline="black", width=2, fill=self.logic.node_colors[text]
+            )
         self.canvas.create_text(x, y, text=text, font=('Arial', 14, 'bold'))
         return circle
 
@@ -136,7 +139,6 @@ class TreeVisualizer:
         if goal_node and not self.validate_input(goal_node):
             messagebox.showerror("Error", "Invalid goal node. Please enter a valid node or leave blank.")
             return
-
         self.logic.ids(start_node, goal_node)
 
     def run(self):

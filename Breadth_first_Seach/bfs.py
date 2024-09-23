@@ -23,7 +23,6 @@ class BFSLogic:
             self.update_node_color(node, COLOR_NOT_VISITED)
 
     def bfs(self, start_node, goal_node=None):
-        # Perform BFS traversal and visualize the process, stopping if the goal node is found.
         queue = [start_node]
         visited = set()
 
@@ -31,17 +30,17 @@ class BFSLogic:
             current_node = queue.pop(0)
 
             if current_node not in visited:
-                print("Visiting: ",current_node)
+                print("Visiting: ", current_node)
                 self.update_node_color(current_node, COLOR_VISITING)
 
             if current_node == goal_node:
-                print("Goal: ",current_node)
-                self.update_node_color(current_node, COLOR_GOAL)  # Mark goal node as red
+                print("Goal: ", current_node)
+                self.update_node_color(current_node, COLOR_GOAL)
                 self.show_goal_message(goal_node)
                 return
 
             visited.add(current_node)
-            print("Visited: ",current_node)
+            print("Visited: ", current_node)
             self.update_node_color(current_node, COLOR_VISITED)
 
             for neighbor in self.get_neighbors(current_node):
@@ -51,7 +50,7 @@ class BFSLogic:
                     self.update_node_color(neighbor, COLOR_VISITING)
 
     def get_neighbors(self, node):
-        # Define neighbors for each node as a simple adjacency list.
+        # Define neighbors for each node.
         neighbors = {
             'A': ['B', 'C'],
             'B': ['D', 'E'],

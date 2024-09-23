@@ -5,7 +5,7 @@ import time
 from gbfs import GBFSLogic
 
 NODE_RADIUS = 20
-time_seconds = 5
+time_seconds = 0.5
 
 class TreeVisualizer:
     start_count = 0
@@ -70,9 +70,9 @@ class TreeVisualizer:
         self.logic.set_heuristics(self.heuristics)
 
         # Draw nodes and edges
+        self.heuristic_texts = {}  # Dictionary to store heuristic text items
         self.nodes = {}
         self.edges = []
-        self.heuristic_texts = {}  # Dictionary to store heuristic text items
         self.draw_nodes()
         self.draw_edges()
 
@@ -99,13 +99,10 @@ class TreeVisualizer:
 
     def create_circle(self, x, y, r, node):
         # Create a circle with node text and its heuristic value below.
-        # Create the circle for the node
         circle = self.canvas.create_oval(
             x - r, y - r, x + r, y + r,
             outline="black", width=2, fill=self.logic.node_colors[node]
         )
-        
-        # Create text inside the circle (node letter)
         self.canvas.create_text(x, y, text=node, font=('Arial', 14, 'bold'))
         
         # Create text below the circle for the heuristic value
@@ -128,10 +125,11 @@ class TreeVisualizer:
 
     def update_node_color(self, node, color):
         # Update the color of a specified node.
-        self.logic.node_colors[node] = color
-        self.canvas.itemconfig(self.nodes[node], fill=color)
-        self.root.update()
-        time.sleep(time_seconds)
+        if node in self.nodes:
+            self.logic.node_colors[node] = color
+            self.canvas.itemconfig(self.nodes[node], fill=color)
+            self.root.update()
+            time.sleep(time_seconds)
 
     def show_goal_message(self, goal_node):
         # Show a message when the goal node is reached.
@@ -161,16 +159,15 @@ class TreeVisualizer:
         if TreeVisualizer.start_count != 0:
             self.logic.reset_colors()
         TreeVisualizer.start_count += 1
-        
         start_node = self.start_node_entry.get().strip().upper()
         goal_node = self.goal_node_entry.get().strip().upper()
 
         if not self.validate_input(start_node):
-            messagebox.showerror("Error", "Invalid start node. Please enter a valid node (A-G).")
+            messagebox.showerror("Error", "Invalid start node. Please enter a valid node.")
             return
 
         if goal_node and not self.validate_input(goal_node):
-            messagebox.showerror("Error", "Invalid goal node. Please enter a valid node (A-G) or leave blank.")
+            messagebox.showerror("Error", "Invalid goal node. Please enter a valid node or leave blank.")
             return
         # Reset heuristics to original values
         self.heuristics = self.original_heuristics.copy()

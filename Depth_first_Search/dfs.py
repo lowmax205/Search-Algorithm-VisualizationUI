@@ -51,7 +51,7 @@ class DFSLogic:
                     self.update_node_color(neighbor, COLOR_VISITING)
 
     def get_neighbors(self, node):
-        # Define neighbors for each node as a simple adjacency list.
+        # Define neighbors for each node.
         neighbors = {
             'A': ['B', 'C'],
             'B': ['D', 'E'],
