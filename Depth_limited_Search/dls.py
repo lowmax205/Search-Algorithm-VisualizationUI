@@ -75,18 +75,18 @@ class DFS_DLSLogic:
 
             if current_node not in visited:
                 print("Visiting:", current_node)
-                self.update_node_color(current_node, "yellow")
+                self.update_node_color(current_node, COLOR_VISITING)
 
                 # Check if the current node is the goal
                 if current_node == goal_node:
                     print("Goal:", current_node)
-                    self.update_node_color(current_node, "green")
+                    self.update_node_color(current_node, COLOR_GOAL)
                     self.show_goal_message(goal_node)
                     return
 
                 visited.add(current_node)
                 print("Visited:", current_node)
-                self.update_node_color(current_node, "blue")
+                self.update_node_color(current_node, COLOR_VISITED)
 
                 # Explore neighbors only if within the allowed depth
                 for neighbor in reversed(self.get_neighbors(current_node)):
@@ -99,7 +99,7 @@ class DFS_DLSLogic:
                             stack.append((neighbor, depth + 1))
 
                         print("Adding neighbor:", neighbor, "at depth:", depth + 1)
-                        self.update_node_color(neighbor, "yellow")
+                        self.update_node_color(neighbor, COLOR_VISITING)
 
     def get_neighbors(self, node):
         # Define neighbors for each node as a simple adjacency list.
