@@ -53,7 +53,7 @@ class TreeVisualizer:
         self.original_heuristics = {
             'A': 3,
             'B': 2,
-            'C': 2,
+            'C': 5,
             'D': 6,
             'E': 4,
             'F': 4,

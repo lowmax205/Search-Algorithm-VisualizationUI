@@ -1,5 +1,3 @@
-import time
-
 # Define constants for colors
 COLOR_VISITED = 'green'
 COLOR_VISITING = 'yellow'
