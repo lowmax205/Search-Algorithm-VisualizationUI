@@ -13,24 +13,20 @@ class TreeVisualizer:
     def __init__(self, root):
         self.root = root
         self.root.title("Greedy Best-First Search Visualization")
-
-        # Set up the logic backend
+        
         self.logic = GBFSLogic(
             canvas=None,
             update_node_color=self.update_node_color,
             show_goal_message=self.show_goal_message
         )
 
-        # Create a frame for user input and visualization
         self.main_frame = tk.Frame(self.root)
         self.main_frame.pack(pady=10)
 
-        # Create the canvas for visualizing the tree
         self.canvas = tk.Canvas(self.main_frame, width=600, height=500)
         self.canvas.grid(row=0, column=0, columnspan=2, pady=10)
-        self.logic.canvas = self.canvas  # Link canvas to logic
+        self.logic.canvas = self.canvas
 
-        # Define node positions and set them in the logic
         self.positions = {
             'A': (300, 50),
             'B': (200, 150),
@@ -49,7 +45,6 @@ class TreeVisualizer:
         }
         self.logic.set_positions(self.positions)
 
-        # Set heuristic values for nodes
         self.original_heuristics = {
             'A': 0,
             'B': 5,
@@ -69,23 +64,18 @@ class TreeVisualizer:
         self.heuristics = self.original_heuristics.copy()
         self.logic.set_heuristics(self.heuristics)
 
-        # Draw nodes and edges
-        self.heuristic_texts = {}  # Dictionary to store heuristic text items
+        self.heuristic_texts = {}
         self.nodes = {}
         self.edges = []
         self.draw_nodes()
         self.draw_edges()
-
-        # Create input fields for the user
         self.create_input_ui()
 
     def draw_nodes(self):
-        # Draw all the nodes on the canvas.
         for node, (x, y) in self.positions.items():
             self.nodes[node] = self.create_circle(x, y, NODE_RADIUS, node)
 
     def draw_edges(self):
-        # Draw edges between nodes.
         edges = [
             ('A', 'B'), ('A', 'C'),
             ('B', 'D'), ('B', 'E'),
@@ -98,14 +88,12 @@ class TreeVisualizer:
             self.create_line(*self.positions[start], *self.positions[end], NODE_RADIUS)
 
     def create_circle(self, x, y, r, node):
-        # Create a circle with node text and its heuristic value below.
         circle = self.canvas.create_oval(
             x - r, y - r, x + r, y + r,
             outline="black", width=2, fill=self.logic.node_colors[node]
         )
         self.canvas.create_text(x, y, text=node, font=('Arial', 14, 'bold'))
         
-        # Create text below the circle for the heuristic value
         heuristic_value = self.heuristics.get(node, "")
         self.heuristic_texts[node] = self.canvas.create_text(
             x, y + r + 10, text=str(heuristic_value), font=('Arial', 12)
@@ -114,7 +102,6 @@ class TreeVisualizer:
         return circle
 
     def create_line(self, x1, y1, x2, y2, r):
-        # Create a line between two circles avoiding overlap.
         angle = math.atan2(y2 - y1, x2 - x1)
         start_x = x1 + r * math.cos(angle)
         start_y = y1 + r * math.sin(angle)
@@ -124,7 +111,6 @@ class TreeVisualizer:
         self.edges.append(line)
 
     def update_node_color(self, node, color):
-        # Update the color of a specified node.
         if node in self.nodes:
             self.logic.node_colors[node] = color
             self.canvas.itemconfig(self.nodes[node], fill=color)
@@ -132,11 +118,9 @@ class TreeVisualizer:
             time.sleep(time_seconds)
 
     def show_goal_message(self, goal_node):
-        # Show a message when the goal node is reached.
         messagebox.showinfo("Goal Reached", f"Goal node '{goal_node}' reached!")
 
     def create_input_ui(self):
-        # Create input fields and buttons in the main window.
         tk.Label(self.main_frame, text="Start Node:").grid(row=1, column=0, padx=5, pady=5)
         self.start_node_entry = tk.Entry(self.main_frame, width=5)
         self.start_node_entry.grid(row=1, column=1, padx=5, pady=5)
@@ -149,12 +133,10 @@ class TreeVisualizer:
         self.start_button.grid(row=3, column=0, columnspan=2, pady=10)
 
     def validate_input(self, node):
-        # Validate if the node input is within the valid range.
         valid_nodes = set(self.positions.keys())
         return node in valid_nodes
 
     def start_function(self):
-        # Handle the start button click.
         print("START COUNT: ", TreeVisualizer.start_count)
         if TreeVisualizer.start_count != 0:
             self.logic.reset_colors()
@@ -169,10 +151,8 @@ class TreeVisualizer:
         if goal_node and not self.validate_input(goal_node):
             messagebox.showerror("Error", "Invalid goal node. Please enter a valid node or leave blank.")
             return
-        # Reset heuristics to original values
         self.heuristics = self.original_heuristics.copy()
         
-        # Update heuristic value to 0 for the specified goal node
         if goal_node:
             self.heuristics[goal_node] = 0
             self.logic.set_heuristics(self.heuristics)
@@ -181,23 +161,17 @@ class TreeVisualizer:
         self.logic.greedy_bfs(start_node, goal_node)
 
     def update_node_heuristics_display(self):
-        # Update the displayed heuristic values after setting the goal node.
-        # Clear and update heuristic values
         for node, (x, y) in self.positions.items():
-            # Delete the existing heuristic text
             if node in self.heuristic_texts:
                 self.canvas.delete(self.heuristic_texts[node])
-            # Draw the updated heuristic value
             heuristic_value = self.heuristics.get(node, "")
             self.heuristic_texts[node] = self.canvas.create_text(
                 x, y + NODE_RADIUS + 10, text=str(heuristic_value), font=('Arial', 12)
             )
 
     def run(self):
-        # Run the main application.
         self.root.mainloop()
 
-# Main entry point
 if __name__ == "__main__":
     root = tk.Tk()
     visualizer = TreeVisualizer(root)

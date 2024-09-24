@@ -14,21 +14,17 @@ class TreeVisualizer:
         self.root = root
         self.root.title("Iterative Deepening Search Visualization")
 
-        # Set up the logic backend with the IDS logic
         self.logic = IDS_Logic(
             update_node_color=self.update_node_color,
             show_goal_message=self.show_goal_message
         )
 
-        # Create a frame for user input and visualization
         self.main_frame = tk.Frame(self.root)
         self.main_frame.pack(pady=10)
 
-        # Create the canvas for visualizing the tree
         self.canvas = tk.Canvas(self.main_frame, width=600, height=500)
         self.canvas.grid(row=0, column=0, columnspan=2, pady=10)
 
-        # Define node positions and set them in the logic
         self.positions = {
             'A': (300, 50),
             'B': (200, 150),
@@ -47,22 +43,17 @@ class TreeVisualizer:
         }
         self.logic.set_positions(self.positions)
 
-        # Draw nodes and edges
         self.nodes = {}
         self.edges = []
         self.draw_nodes()
         self.draw_edges()
-
-        # Create input fields for the user
         self.create_input_ui()
 
     def draw_nodes(self):
-        # Draw all the nodes on the canvas.
         for node, (x, y) in self.positions.items():
             self.nodes[node] = self.create_circle(x, y, NODE_RADIUS, node)
 
     def draw_edges(self):
-        # Draw edges between nodes.
         edges = [
             ('A', 'B'), ('A', 'C'),
             ('B', 'D'), ('B', 'E'),
@@ -75,7 +66,6 @@ class TreeVisualizer:
             self.create_line(*self.positions[start], *self.positions[end], NODE_RADIUS)
 
     def create_circle(self, x, y, r, text):
-        # Create a circle with text inside and return the canvas object.
         circle = self.canvas.create_oval(
             x - r, y - r, x + r, y + r,
             outline="black", width=2, fill=self.logic.node_colors[text]
@@ -84,7 +74,6 @@ class TreeVisualizer:
         return circle
 
     def create_line(self, x1, y1, x2, y2, r):
-        # Create a line between two circles avoiding overlap.
         angle = math.atan2(y2 - y1, x2 - x1)
         start_x = x1 + r * math.cos(angle)
         start_y = y1 + r * math.sin(angle)
@@ -94,7 +83,6 @@ class TreeVisualizer:
         self.edges.append(line)
 
     def update_node_color(self, node, color):
-        # Update the color of a specified node.
         if node in self.nodes:
             self.logic.node_colors[node] = color
             self.canvas.itemconfig(self.nodes[node], fill=color)
@@ -102,11 +90,9 @@ class TreeVisualizer:
             time.sleep(time_seconds)
 
     def show_goal_message(self, goal_node):
-        # Show a message when the goal node is reached.
         messagebox.showinfo("Goal Reached", f"Goal node '{goal_node}' reached!")
 
     def create_input_ui(self):
-        # Create input fields and buttons in the main window.
         tk.Label(self.main_frame, text="Start Node:").grid(row=1, column=0, padx=5, pady=5)
         self.start_node_entry = tk.Entry(self.main_frame, width=5)
         self.start_node_entry.grid(row=1, column=1, padx=5, pady=5)
@@ -119,12 +105,10 @@ class TreeVisualizer:
         self.start_button.grid(row=3, column=0, columnspan=2, pady=10)
 
     def validate_input(self, node):
-        # Validate if the node input is within the valid range.
         valid_nodes = set(self.positions.keys())
         return node in valid_nodes
 
     def start_function(self):
-        # Handle the start button click.
         print("START COUNT:", TreeVisualizer.start_count)
         if TreeVisualizer.start_count != 0:
             self.logic.reset_colors()
@@ -142,11 +126,8 @@ class TreeVisualizer:
         self.logic.ids(start_node, goal_node)
 
     def run(self):
-        # Run the main application.
         self.root.mainloop()
 
-
-# Main entry point
 if __name__ == "__main__":
     root = tk.Tk()
     visualizer = TreeVisualizer(root)
