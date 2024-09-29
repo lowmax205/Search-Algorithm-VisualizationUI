@@ -27,4 +27,4 @@ Uniformed search algorithms are a category of algorithms that explore the search
 
 ## 🛠️ For those who want's to HELP.
 
-Your support and contributions to **Uniformed Search Algorithm** are greatly appreciated! Whether you're a developer, designer, or just passionate about making travel easier, there are plenty of ways you can help. Feel free to suggest features, report issues, or contribute to the code. Every bit of help counts in making this app better for travelers everywhere. Thank you!
+Your support and contributions to **Uniformed Search Algorithm** are greatly appreciated! Feel free to suggest features, report issues, or contribute to the code. Every bit of help counts in making this app better for travelers everywhere. Thank you!
