@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import math
 import time
-from dfs import DFSLogic
+from algorithm.bfs import BFSLogic
 
 NODE_RADIUS = 20
 time_seconds = 0.5
@@ -12,9 +12,9 @@ class TreeVisualizer:
     
     def __init__(self, root):
         self.root = root
-        self.root.title("Depth First Search Visualization")
+        self.root.title("Breadth First Seach Visualization")
 
-        self.logic = DFSLogic(
+        self.logic = BFSLogic(
             canvas=None,
             update_node_color=self.update_node_color,
             show_goal_message=self.show_goal_message
@@ -26,7 +26,7 @@ class TreeVisualizer:
         self.canvas = tk.Canvas(self.main_frame, width=600, height=500)
         self.canvas.grid(row=0, column=0, columnspan=2, pady=10)
         self.logic.canvas = self.canvas
-
+        
         self.positions = {
             'A': (300, 50),
             'B': (200, 150),
@@ -69,7 +69,7 @@ class TreeVisualizer:
 
     def create_circle(self, x, y, r, text):
         circle = self.canvas.create_oval(
-            x - r, y - r, x + r, y + r,
+            x - r, y - r, x + r, y + r, 
             outline="black", width=2, fill=self.logic.node_colors[text]
             )
         self.canvas.create_text(x, y, text=text, font=('Arial', 14, 'bold'))
@@ -95,6 +95,7 @@ class TreeVisualizer:
         messagebox.showinfo("Goal Reached", f"Goal node '{goal_node}' reached!")
 
     def create_input_ui(self):
+        # Create input fields and buttons in the main window.
         tk.Label(self.main_frame, text="Start Node:").grid(row=1, column=0, padx=5, pady=5)
         self.start_node_entry = tk.Entry(self.main_frame, width=5)
         self.start_node_entry.grid(row=1, column=1, padx=5, pady=5)
@@ -125,7 +126,8 @@ class TreeVisualizer:
         if goal_node and not self.validate_input(goal_node):
             messagebox.showerror("Error", "Invalid goal node. Please enter a valid node or leave blank.")
             return
-        self.logic.dfs(start_node, goal_node)
+        
+        self.logic.bfs(start_node, goal_node)
 
     def run(self):
         self.root.mainloop()
