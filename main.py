@@ -64,14 +64,14 @@ class TreeVisualizer:
         self.nodes = {}
         self.edges = []
         self.selected_algorithm = tk.StringVar()
-        self.selected_algorithm.set("UCS")
+        self.selected_algorithm.set("BFS")
 
         tk.Label(self.main_frame, text="Select Algorithm:").grid(row=1, column=0, padx=5, pady=5)
         algorithm_menu = tk.OptionMenu(self.main_frame, self.selected_algorithm,  "BFS", "DFS", "DLS", "GBFS", "IDS", "UCS", command=self.update_algorithm)
         algorithm_menu.grid(row=1, column=1, padx=5, pady=5)
 
         self.logic = None
-        self.update_algorithm("UCS")
+        self.update_algorithm("BFS")
         self.draw_nodes()
         self.draw_edges()
         self.create_input_ui()
