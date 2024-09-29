@@ -3,9 +3,12 @@ from tkinter import messagebox
 import time
 import math
 
-from algorithm.gbfs import GBFSLogic
 from algorithm.bfs import BFSLogic
 from algorithm.dfs import DFSLogic
+from algorithm.dls import DFS_DLSLogic
+from algorithm.gbfs import GBFSLogic
+from algorithm.ids import IDSLogic
+from algorithm.ucs import UCSLogic
 
 NODE_RADIUS = 20
 time_seconds = 0.5
@@ -23,7 +26,6 @@ class TreeVisualizer:
         self.canvas = tk.Canvas(self.main_frame, width=600, height=500)
         self.canvas.grid(row=0, column=0, columnspan=2, pady=10)
 
-        # Set the positions of the nodes
         self.positions = {
             'A': (300, 50),
             'B': (200, 150),
@@ -62,31 +64,20 @@ class TreeVisualizer:
         self.nodes = {}
         self.edges = []
         self.selected_algorithm = tk.StringVar()
-        self.selected_algorithm.set("GBFS")
+        self.selected_algorithm.set("UCS")
 
         tk.Label(self.main_frame, text="Select Algorithm:").grid(row=1, column=0, padx=5, pady=5)
-        algorithm_menu = tk.OptionMenu(self.main_frame, self.selected_algorithm, "GBFS", "BFS", "DFS", command=self.update_algorithm)
+        algorithm_menu = tk.OptionMenu(self.main_frame, self.selected_algorithm,  "BFS", "DFS", "DLS", "GBFS", "IDS", "UCS", command=self.update_algorithm)
         algorithm_menu.grid(row=1, column=1, padx=5, pady=5)
 
         self.logic = None
-        self.update_algorithm("GBFS")
+        self.update_algorithm("UCS")
         self.draw_nodes()
         self.draw_edges()
         self.create_input_ui()
 
     def update_algorithm(self, algorithm_name):
-        
-        if algorithm_name == "GBFS":
-            self.logic = GBFSLogic(
-                canvas=self.canvas,
-                update_node_color=self.update_node_color,
-                show_goal_message=self.show_goal_message
-            )
-            self.logic.set_positions(self.positions)
-            self.logic.set_heuristics(self.heuristics)
-            self.update_node_heuristics_display()
-
-        elif algorithm_name == "BFS":
+        if algorithm_name == "BFS":
             self.clear_node_heuristics_display()
             self.logic = BFSLogic(
                 canvas=self.canvas,
@@ -95,7 +86,6 @@ class TreeVisualizer:
             )
             self.logic.set_positions(self.positions)
             
-
         elif algorithm_name == "DFS":
             self.clear_node_heuristics_display()
             self.logic = DFSLogic(
@@ -105,6 +95,43 @@ class TreeVisualizer:
             )
             self.logic.set_positions(self.positions)
             
+        elif algorithm_name == "DLS":
+            self.clear_node_heuristics_display()
+            self.logic = DFS_DLSLogic(
+                canvas=self.canvas,
+                update_node_color=self.update_node_color,
+                show_goal_message=self.show_goal_message
+            )
+            self.logic.set_positions(self.positions)
+        
+        elif algorithm_name == "GBFS":
+            self.logic = GBFSLogic(
+                canvas=self.canvas,
+                update_node_color=self.update_node_color,
+                show_goal_message=self.show_goal_message
+            )
+            self.logic.set_positions(self.positions)
+            self.logic.set_heuristics(self.heuristics)
+            self.update_node_heuristics_display()
+
+        elif algorithm_name == "IDS":
+            self.clear_node_heuristics_display()
+            self.logic = IDSLogic(
+                canvas=self.canvas,
+                update_node_color=self.update_node_color,
+                show_goal_message=self.show_goal_message
+            )
+            self.logic.set_positions(self.positions)
+
+        elif algorithm_name == "UCS":   
+            self.clear_node_heuristics_display()    
+            self.logic = UCSLogic(
+                canvas=self.canvas,
+                update_node_color=self.update_node_color,
+                show_goal_message=self.show_goal_message,
+                update_cost_display=self.update_cost_display
+            )
+            self.logic.set_positions(self.positions)
 
     def draw_nodes(self):
         for node, (x, y) in self.positions.items():
@@ -168,12 +195,11 @@ class TreeVisualizer:
     def start_function(self):
         start_node = self.start_node_entry.get().strip().upper()
         goal_node = self.goal_node_entry.get().strip().upper()
-        
+
         print("START COUNT: ", TreeVisualizer.start_count)
         
         if TreeVisualizer.start_count != 0:
             self.logic.reset_colors()
-            # Clear heuristic texts when resetting colors
 
         if not self.validate_input(start_node):
             messagebox.showerror("Error", "Invalid start node. Please enter a valid node.")
@@ -183,7 +209,16 @@ class TreeVisualizer:
             messagebox.showerror("Error", "Invalid goal node. Please enter a valid node or leave blank.")
             return
 
-        if isinstance(self.logic, GBFSLogic):
+        if isinstance(self.logic, BFSLogic):
+            self.logic.bfs(start_node, goal_node)
+            
+        elif isinstance(self.logic, DFSLogic):
+            self.logic.dfs(start_node, goal_node)
+            
+        elif isinstance(self.logic, DFS_DLSLogic):
+            self.logic.dls(start_node, goal_node)
+            
+        elif isinstance(self.logic, GBFSLogic):
             self.heuristics = self.original_heuristics.copy()
             if goal_node:
                 self.heuristics[goal_node] = 0
@@ -192,11 +227,11 @@ class TreeVisualizer:
 
             self.logic.greedy_bfs(start_node, goal_node)
 
-        elif isinstance(self.logic, BFSLogic):
-            self.logic.bfs(start_node, goal_node)
+        elif isinstance(self.logic, IDSLogic):
+            self.logic.ids(start_node, goal_node)
 
-        elif isinstance(self.logic, DFSLogic):
-            self.logic.dfs(start_node, goal_node)
+        elif isinstance(self.logic, UCSLogic):
+            self.logic.ucs(start_node, goal_node)
 
         TreeVisualizer.start_count += 1
 
@@ -213,10 +248,19 @@ class TreeVisualizer:
         for node, text_id in self.heuristic_texts.items():
             self.canvas.delete(text_id)
         self.heuristic_texts.clear()
+    
+    def update_cost_display(self, node, cost):
+        if node in self.nodes:
+            if node in self.logic.cost_text_ids:
+                self.canvas.delete(self.logic.cost_text_ids[node])
+            x, y = self.positions[node]
+            text_id = self.canvas.create_text(x, y + NODE_RADIUS + NODE_RADIUS, text=str(cost), font=('Arial', 10))
+            self.logic.cost_text_ids[node] = text_id
+            self.canvas.itemconfig(self.nodes[node], fill=self.logic.node_colors[node])
+
 
     def run(self):
         self.root.mainloop()
-
 
 if __name__ == "__main__":
     root = tk.Tk()
