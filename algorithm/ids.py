@@ -6,11 +6,11 @@ class IDSLogic(BaseSearchLogic):
         depth = 0
         while True:
             print(f"Exploring with depth limit: {depth}")
-            self.reset_colors()  # Reset colors before each depth-limited search
             found = self.dls(start_node, goal_node, depth)  # Perform depth-limited search
             if found:
                 return  # Stop if goal is found
             depth += 1  # Increase depth for the next iteration
+            self.reset_colors()  # Reset colors
 
     def dls(self, start_node, goal_node, depth_limit):
         current_level = [(start_node, 0)]  # Initialize current level with start node and depth
