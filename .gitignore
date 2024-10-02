@@ -1,10 +1,3 @@
-__pycache__/source.cpython-311.pyc
-algorithm/__pycache__/bfs.cpython-311.pyc
-algorithm/__pycache__/dfs.cpython-311.pyc
-algorithm/__pycache__/dls.cpython-311.pyc
-algorithm/__pycache__/gbfs.cpython-311.pyc
-algorithm/__pycache__/ids.cpython-311.pyc
-algorithm/__pycache__/ucs.cpython-311.pyc
 informed/__pycache__/gbfs.cpython-311.pyc
 uninformed/__pycache__/bfs.cpython-311.pyc
 uninformed/__pycache__/dfs.cpython-311.pyc
