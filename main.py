@@ -104,25 +104,25 @@ class TreeVisualizer:
         # Reset any cost display for UCS when switching algorithms
         if algorithm_name != "UCS":
             self.reset_cost_display()
-        
-        
-
-        # Switch between different algorithm logic classes
-        if algorithm_name == "BFS":
-            self.set_algorithm_logic(BFSLogic)
-        elif algorithm_name == "DFS":
-            self.set_algorithm_logic(DFSLogic)
-        elif algorithm_name == "DLS":
-            self.set_algorithm_logic(DFS_DLSLogic)
-        elif algorithm_name == "IDS":
-            self.set_algorithm_logic(IDSLogic)
-        elif algorithm_name == "UCS":
-            self.set_algorithm_logic(UCSLogic)
-        elif algorithm_name == "GBFS":
-            self.set_algorithm_logic(GBFSLogic, clear_heuristics=False)
-            self.logic.set_heuristics(self.heuristics)
-            self.update_node_heuristics_display()
-
+            
+            
+            
+            # Switch between different algorithm logic classes
+            if algorithm_name == "BFS":
+                self.set_algorithm_logic(BFSLogic)
+            elif algorithm_name == "DFS":
+                self.set_algorithm_logic(DFSLogic)
+            elif algorithm_name == "DLS":
+                self.set_algorithm_logic(DFS_DLSLogic)
+            elif algorithm_name == "IDS":
+                self.set_algorithm_logic(IDSLogic)
+            elif algorithm_name == "UCS":
+                self.set_algorithm_logic(UCSLogic)
+            elif algorithm_name == "GBFS":
+                self.set_algorithm_logic(GBFSLogic, clear_heuristics=False)
+                self.logic.set_heuristics(self.heuristics)
+                self.update_node_heuristics_display()
+                
     # Set the logic for the chosen algorithm and clear heuristic display if needed
     def set_algorithm_logic(self, LogicClass, clear_heuristics=True):
         if clear_heuristics:
@@ -267,7 +267,6 @@ class TreeVisualizer:
         else:
             # If both or neither algorithms are selected, show an error message
             messagebox.showerror("Error", "Please select only one algorithm type: either Uninformed or Informed.")
-
 
         TreeVisualizer.start_count += 1
 
