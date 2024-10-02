@@ -1,12 +1,8 @@
-# Uniformed Search Algorithm
+# Uniformed & Informed Search Algorithm
 
 ## Overview
 
-The **Uniformed Search Algorithm** project aims to demonstrate how uniformed search techniques work in problem-solving scenarios. This project is designed for educational purposes, providing a clear understanding of the algorithm's mechanics, advantages, and applications.
-
-## What is a Uniformed Search Algorithm?
-
-Uniformed search algorithms are a category of algorithms that explore the search space without any knowledge about the problem's structure. They systematically explore nodes based on certain criteria until they find a solution. Common uniformed search algorithms include **Breadth-First Search (BFS)** and **Depth-First Search (DFS)**.
+The **Uniformed & Informed Search Algorithm** project aims to demonstrate how uniformed search techniques work in problem-solving scenarios. This project is designed for educational purposes, providing a clear understanding of the algorithm's mechanics, advantages, and applications.
 
 ## Key Features
 
