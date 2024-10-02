@@ -3,12 +3,12 @@ from tkinter import messagebox
 import time
 import math
 
-from algorithm.bfs import BFSLogic
-from algorithm.dfs import DFSLogic
-from algorithm.dls import DFS_DLSLogic
-from algorithm.gbfs import GBFSLogic
-from algorithm.ids import IDSLogic
-from algorithm.ucs import UCSLogic
+from uninformed.bfs import BFSLogic
+from uninformed.dfs import DFSLogic
+from uninformed.dls import DFS_DLSLogic
+from informed.gbfs import GBFSLogic
+from uninformed.ids import IDSLogic
+from uninformed.ucs import UCSLogic
 
 FONT = ('Arial', 14, 'bold')
 NODE_RADIUS = 20
@@ -70,13 +70,22 @@ class TreeVisualizer:
         self.heuristic_texts = {} 
         self.nodes = {} 
         self.edges = []
-        self.selected_algorithm = tk.StringVar()  # Holds the selected algorithm
-        self.selected_algorithm.set("BFS")  # Default algorithm is BFS
+        
+        # Holds the selected algorithm
+        self.selected_uninformed_algorithm = tk.StringVar()  
+        self.selected_uninformed_algorithm.set("None")  
+        self.selected_informed_algorithm = tk.StringVar()
+        self.selected_informed_algorithm.set("None") 
 
-        # Dropdown menu to select an algorithm
-        tk.Label(self.main_frame, text="Select Algorithm:").grid(row=1, column=0, padx=5, pady=5)
-        algorithm_menu = tk.OptionMenu(self.main_frame, self.selected_algorithm, "BFS", "DFS", "DLS", "GBFS", "IDS", "UCS", command=self.update_algorithm)
-        algorithm_menu.grid(row=1, column=1, padx=5, pady=5)
+        # Dropdown menu to select an uninformed algorithm
+        tk.Label(self.main_frame, text="Select Uninformed Algorithm:").grid(row=1, column=0, padx=5, pady=5)
+        uninformed_menu = tk.OptionMenu(self.main_frame, self.selected_uninformed_algorithm, "None", "BFS", "DFS", "DLS", "IDS", "UCS", command=self.update_algorithm)
+        uninformed_menu.grid(row=1, column=1, padx=5, pady=5)
+
+        # Dropdown menu to select an informed algorithm (for now just GBFS)
+        tk.Label(self.main_frame, text="Select Informed Algorithm:").grid(row=2, column=0, padx=5, pady=5)
+        informed_menu = tk.OptionMenu(self.main_frame, self.selected_informed_algorithm, "None", "GBFS", "A-star", command=self.update_algorithm)
+        informed_menu.grid(row=2, column=1, padx=5, pady=5)
 
         # Initialize the algorithm logic (default to BFS)
         self.logic = None
@@ -102,14 +111,14 @@ class TreeVisualizer:
             self.set_algorithm_logic(DFSLogic)
         elif algorithm_name == "DLS":
             self.set_algorithm_logic(DFS_DLSLogic)
-        elif algorithm_name == "GBFS":
-            self.set_algorithm_logic(GBFSLogic, clear_heuristics=False)
-            self.logic.set_heuristics(self.heuristics)
-            self.update_node_heuristics_display()
         elif algorithm_name == "IDS":
             self.set_algorithm_logic(IDSLogic)
         elif algorithm_name == "UCS":
             self.set_algorithm_logic(UCSLogic)
+        elif algorithm_name == "GBFS":
+            self.set_algorithm_logic(GBFSLogic, clear_heuristics=False)
+            self.logic.set_heuristics(self.heuristics)
+            self.update_node_heuristics_display()
 
     # Set the logic for the chosen algorithm and clear heuristic display if needed
     def set_algorithm_logic(self, LogicClass, clear_heuristics=True):
@@ -186,16 +195,16 @@ class TreeVisualizer:
 
     # Create the input interface for users to select the start and goal nodes
     def create_input_ui(self):
-        tk.Label(self.main_frame, text="Start Node:").grid(row=2, column=0, padx=5, pady=5)
+        tk.Label(self.main_frame, text="Start Node:").grid(row=3, column=0, padx=5, pady=5)
         self.start_node_entry = tk.Entry(self.main_frame, width=5)
-        self.start_node_entry.grid(row=2, column=1, padx=5, pady=5)
+        self.start_node_entry.grid(row=3, column=1, padx=5, pady=5)
 
-        tk.Label(self.main_frame, text="Goal Node (Optional):").grid(row=3, column=0, padx=5, pady=5)
+        tk.Label(self.main_frame, text="Goal Node (Optional):").grid(row=4, column=0, padx=5, pady=5)
         self.goal_node_entry = tk.Entry(self.main_frame, width=5)
-        self.goal_node_entry.grid(row=3, column=1, padx=5, pady=5)
+        self.goal_node_entry.grid(row=4, column=1, padx=5, pady=5)
 
         self.start_button = tk.Button(self.main_frame, text="Start", command=self.start_function)
-        self.start_button.grid(row=4, column=0, columnspan=2, pady=10)
+        self.start_button.grid(row=5, column=0, columnspan=2, pady=10)
 
     # Validate user input to ensure it's a valid node in the tree
     def validate_input(self, node):
@@ -223,25 +232,39 @@ class TreeVisualizer:
         if goal_node and not self.validate_input(goal_node):
             messagebox.showerror("Error", "Invalid goal node. Please enter a valid node or leave blank.")
             return
+        
+        # Determine if the user has selected an uninformed or informed algorithm
+        uninformed_algorithm = self.selected_uninformed_algorithm.get()
+        informed_algorithm = self.selected_informed_algorithm.get()
 
-        # Run the appropriate search algorithm based on the selected logic
-        if isinstance(self.logic, BFSLogic):
-            self.logic.bfs(start_node, goal_node)
-        elif isinstance(self.logic, DFSLogic):
-            self.logic.dfs(start_node, goal_node)
-        elif isinstance(self.logic, DFS_DLSLogic):
-            self.logic.dls(start_node, goal_node)
-        elif isinstance(self.logic, GBFSLogic):
-            self.heuristics = self.original_heuristics.copy()
-            if goal_node:
-                self.heuristics[goal_node] = 0
-                self.logic.set_heuristics(self.heuristics)
-                self.update_node_heuristics_display()
-            self.logic.greedy_bfs(start_node, goal_node)
-        elif isinstance(self.logic, IDSLogic):
-            self.logic.ids(start_node, goal_node)
-        elif isinstance(self.logic, UCSLogic):
-            self.logic.ucs(start_node, goal_node)
+        # Ensure only one type of algorithm is selected (either uninformed or informed)
+        if uninformed_algorithm != "None" and informed_algorithm == "None":
+            # Run the appropriate uninformed search algorithm
+            if uninformed_algorithm == "BFS":
+                self.logic.bfs(start_node, goal_node)
+            elif uninformed_algorithm == "DFS":
+                self.logic.dfs(start_node, goal_node)
+            elif uninformed_algorithm == "DLS":
+                self.logic.dls(start_node, goal_node)
+            elif uninformed_algorithm == "IDS":
+                self.logic.ids(start_node, goal_node)
+            elif uninformed_algorithm == "UCS":
+                self.logic.ucs(start_node, goal_node)
+
+        elif uninformed_algorithm == "None" and informed_algorithm != "None":
+            # Run the appropriate informed search algorithm
+            if informed_algorithm == "GBFS":
+                self.heuristics = self.original_heuristics.copy()
+                if goal_node:
+                    self.heuristics[goal_node] = 0
+                    self.logic.set_heuristics(self.heuristics)
+                    self.update_node_heuristics_display()
+                self.logic.greedy_bfs(start_node, goal_node)
+
+        else:
+            # If both or neither algorithms are selected, show an error message
+            messagebox.showerror("Error", "Please select only one algorithm type: either Uninformed or Informed.")
+
 
         TreeVisualizer.start_count += 1
 
