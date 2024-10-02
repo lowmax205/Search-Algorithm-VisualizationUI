@@ -9,6 +9,7 @@ class UCSLogic(BaseSearchLogic):
         self.node_costs = {}  # Dictionary to store costs for each node
         
     def ucs(self, start_node, goal_node=None):
+        total_cost = 0
         priority_queue = [(0, start_node)]  # Initialize priority queue with start node and cost 0
         visited = set()  # Track visited nodes
         costs = {start_node: 0}  # Track costs for each node
@@ -16,14 +17,14 @@ class UCSLogic(BaseSearchLogic):
 
         while priority_queue:
             current_cost, current_node = heapq.heappop(priority_queue)  # Pop node with the lowest cost
-
+            total_cost += current_cost
             if current_node not in visited:
                 print("Visiting:", current_node, "with cost:", current_cost)
                 self.update_node_color(current_node, COLOR_VISITING)  # Mark node as visiting
                 self.update_cost_display(current_node, current_cost)  # Display the current cost
-
+                
             if current_node == goal_node:  # If the goal is reached, stop
-                print("Goal: ", current_node, "reached with cost:", current_cost)
+                print("Goal: ", current_node, "reached with total cost of:", total_cost)
                 self.update_node_color(current_node, COLOR_GOAL)
                 self.update_cost_display(current_node, current_cost)  # Display the final cost
                 self.show_goal_message(goal_node)

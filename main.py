@@ -6,9 +6,10 @@ import math
 from uninformed.bfs import BFSLogic
 from uninformed.dfs import DFSLogic
 from uninformed.dls import DFS_DLSLogic
-from informed.gbfs import GBFSLogic
 from uninformed.ids import IDSLogic
 from uninformed.ucs import UCSLogic
+
+from informed.gbfs import GBFSLogic
 
 FONT = ('Arial', 14, 'bold')
 NODE_RADIUS = 20
@@ -103,6 +104,8 @@ class TreeVisualizer:
         # Reset any cost display for UCS when switching algorithms
         if algorithm_name != "UCS":
             self.reset_cost_display()
+        
+        
 
         # Switch between different algorithm logic classes
         if algorithm_name == "BFS":

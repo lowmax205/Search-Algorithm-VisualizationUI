@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 import math
 import time
-from algorithm.bfs import BFSLogic
+
+from uninformed.bfs import BFSLogic
 
 NODE_RADIUS = 20
 time_seconds = 0.5
