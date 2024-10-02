@@ -13,7 +13,7 @@ from informed.gbfs import GBFSLogic
 
 FONT = ('Arial', 14, 'bold')
 NODE_RADIUS = 20
-time_seconds = 0.5
+time_seconds = 0.2
 
 # Class for visualizing the tree and search algorithms
 class TreeVisualizer:
