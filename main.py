@@ -99,15 +99,16 @@ class TreeVisualizer:
         # Create the user input interface (start node, goal node)
         self.create_input_ui()
 
-    # Update the selected algorithm logic when the user chooses a different algorithm
+        # Update the selected algorithm logic when the user chooses a different algorithm
     def update_algorithm(self, algorithm_name):
-        # Reset any cost display for UCS when switching algorithms
+        if algorithm_name in ["BFS", "DFS", "DLS", "IDS", "UCS"]:
+            self.selected_informed_algorithm.set("None")
+        elif algorithm_name in ["GBFS", "A-star"]:
+            self.selected_uninformed_algorithm.set("None")
+        
         if algorithm_name != "UCS":
             self.reset_cost_display()
-            
-            
-            
-        # Switch between different algorithm logic classes
+
         if algorithm_name == "BFS":
             self.set_algorithm_logic(BFSLogic)
         elif algorithm_name == "DFS":
@@ -122,13 +123,12 @@ class TreeVisualizer:
             self.set_algorithm_logic(GBFSLogic, clear_heuristics=False)
             self.logic.set_heuristics(self.heuristics)
             self.update_node_heuristics_display()
-                
+
     # Set the logic for the chosen algorithm and clear heuristic display if needed
     def set_algorithm_logic(self, LogicClass, clear_heuristics=True):
         if clear_heuristics:
             self.clear_node_heuristics_display()
         
-        # Special case for UCS to include cost display functionality
         if LogicClass == UCSLogic:
             self.logic = LogicClass(
                 canvas=self.canvas,
