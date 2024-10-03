@@ -36,13 +36,15 @@ class BaseSearchLogic:
     def set_positions(self, positions):
         self.positions = positions
         self.node_colors = {node: COLOR_NOT_VISITED for node in self.positions}
-
-    def reset_colors(self):
-        # Reset all node colors to 'not visited' instantly
+        
+    # Reset all node colors to 'not visited'
+    def reset_colors(self, change = False):
         self.node_colors = {node: COLOR_NOT_VISITED for node in self.node_colors}
         for node in self.node_colors:
             self.update_node_color(node, COLOR_NOT_VISITED, animate=False)  # Instant reset
-        print("All nodes have been reset to 'not visited'.")
+            
+        if change == True:
+            print("All nodes have been reset to 'not visited'.")
 
 
     # Return neighbors for a given node (used for search algorithms)

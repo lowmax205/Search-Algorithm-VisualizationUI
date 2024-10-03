@@ -2,9 +2,11 @@ from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED
 from source import BaseSearchLogic
 
 class GBFSLogic(BaseSearchLogic):
-    def __init__(self, canvas, update_node_color, show_goal_message):
+    def __init__(self, canvas, update_node_color, show_goal_message, update_distance_display=None):
         super().__init__(canvas, update_node_color, show_goal_message)
         self.heuristics = {}
+        self.update_distance_display = update_distance_display
+        self.distance_text_ids = {}
 
     def set_heuristics(self, heuristics):
         self.heuristics = heuristics
@@ -34,5 +36,9 @@ class GBFSLogic(BaseSearchLogic):
             for neighbor in self.get_neighbors(current_node):
                 if neighbor not in visited and neighbor not in open_list:
                     open_list.append(neighbor)
-                    print(f"Visiting neighbor: {neighbor}")
+                    print(f"Adding neighbor: {neighbor}")
+
+                    if self.update_distance_display:
+                        distance = self.heuristics.get(neighbor, 0) 
+                        self.update_distance_display(neighbor, distance)
                     self.update_node_color(neighbor, COLOR_VISITING)
