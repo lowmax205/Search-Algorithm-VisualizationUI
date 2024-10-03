@@ -1,7 +1,8 @@
 import tkinter as tk
-from tkinter import messagebox
 import time
 import math
+from tkinter import messagebox
+from source import ORIGINAL_HEURISTICS as heuristics_list
 
 from uninformed.bfs import BFSLogic
 from uninformed.dfs import DFSLogic
@@ -50,24 +51,7 @@ class TreeVisualizer:
             'N': (350, 450)
         }
 
-        # Define heuristics for Greedy Best-First Search (GBFS) or other heuristic-based algorithms
-        self.original_heuristics = {
-            'A': 0,
-            'B': 5,
-            'C': 2,
-            'D': 6,
-            'E': 4,
-            'F': 4,
-            'G': 5,
-            'H': 7,
-            'I': 5,
-            'J': 3,
-            'K': 1,
-            'L': 8,
-            'M': 4,
-            'N': 3
-        }
-        self.heuristics = self.original_heuristics.copy()
+        self.heuristics = heuristics_list.copy()
         self.heuristic_texts = {} 
         self.nodes = {} 
         self.edges = []
@@ -257,7 +241,7 @@ class TreeVisualizer:
         elif uninformed_algorithm == "None" and informed_algorithm != "None":
             # Run the appropriate informed search algorithm
             if informed_algorithm == "GBFS":
-                self.heuristics = self.original_heuristics.copy()
+                self.heuristics = heuristics_list.copy()
                 if goal_node:
                     self.heuristics[goal_node] = 0
                     self.logic.set_heuristics(self.heuristics)

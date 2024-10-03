@@ -4,6 +4,24 @@ COLOR_VISITING = 'yellow'
 COLOR_NOT_VISITED = 'white'
 COLOR_GOAL = 'red'
 
+# Heuristic values for nodes (used in GBFS, A-star, etc.)
+ORIGINAL_HEURISTICS = {
+    'A': 0,
+    'B': 5,
+    'C': 2,
+    'D': 6,
+    'E': 4,
+    'F': 4,
+    'G': 5,
+    'H': 7,
+    'I': 5,
+    'J': 3,
+    'K': 1,
+    'L': 8,
+    'M': 4,
+    'N': 3
+}
+
 class BaseSearchLogic:
     # Initialize with canvas, functions to update node color and show goal message
     def __init__(self, canvas, update_node_color, show_goal_message):
