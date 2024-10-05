@@ -11,6 +11,7 @@ from uninformed.ids import IDSLogic
 from uninformed.ucs import UCSLogic
 
 from informed.gbfs import GBFSLogic
+from informed.astar import AStarLogic
 
 FONT = ('Arial', 14, 'bold')
 NODE_RADIUS = 20
@@ -93,6 +94,8 @@ class TreeVisualizer:
             self.set_algorithm_logic(IDSLogic)
         elif algorithm_name == "UCS":
             self.set_algorithm_logic(UCSLogic)
+        elif algorithm_name == 'A-star':
+            self.set_algorithm_logic(AStarLogic)
         elif algorithm_name == "GBFS":
             self.set_algorithm_logic(GBFSLogic, clear_heuristics=False)
             self.logic.set_heuristics(self.heuristics)
