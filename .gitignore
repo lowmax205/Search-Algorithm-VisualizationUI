@@ -5,3 +5,5 @@ uninformed/__pycache__/dfs.cpython-311.pyc
 uninformed/__pycache__/dls.cpython-311.pyc
 uninformed/__pycache__/ids.cpython-311.pyc
 uninformed/__pycache__/ucs.cpython-311.pyc
+__pycache__/source.cpython-311.pyc
+A-star_Seach/testing.py
