@@ -1,11 +1,13 @@
 import tkinter as tk
 from tkinter import Canvas
 import math
+import time
 from astar import AStarLogic
 
 FONT = ('Arial', 14, 'bold')
 NORMAL_FONT = ('Arial', 12)
 NODE_RADIUS = 20
+time_seconds = 0.2
 
 COLOR_VISITING = "yellow"
 COLOR_GOAL = "green"
@@ -18,15 +20,6 @@ class GraphApp:
         self.canvas = Canvas(root, width=1000, height=900, bg="white")
         self.canvas.pack(side=tk.LEFT)
 
-        self.SURIGAO_DEL_NORTE_DISTANCE = {
-            'Alegria': 46.3, 'Bacuag': 38.7, 'Burgos': 104, 'Claver': 55.1,
-            'Dapa': 65.2, 'Del Carmen': 87.3, 'General Luna': 80.4, 'Gigaquit': 52.7,
-            'Mainit': 36.1, 'Malimono': 30.9, 'Pilar': 90.70, 'Placer': 31.8,
-            'San Benito': 94.2, 'San Francisco': 10.6, 'San Isidro': 93.5,
-            'Santa Monica': 102, 'Sison': 19.3, 'Socorro': 95.7, 'Surigao City': 0,
-            'Tagana-an': 23.5, 'Tubod': 35.2
-        }
-
         self.positions = {
             'A': (350, 800), 'B': (600, 700), 'C': (850, 50), 'D': (700, 800),
             'E': (700, 400), 'F': (750, 300), 'G': (900, 400), 'H': (650, 750),
@@ -38,12 +31,72 @@ class GraphApp:
 
         self.edges = [
             ('S', 'N'), ('S','Q'), ('S', 'T'), ('S', 'E'),
-            ('N', 'J'), ('J', 'I'), ('I', 'U'), ('U', 'A'), ('U', 'L'),
-            ('Q', 'U'), ('T', 'Q'), ('T', 'L'), ('L', 'B'), ('B', 'H'),
-            ('H', 'D'), ('D', 'R'), ('R', 'E'), ('E', 'G'), ('E', 'F'),
-            ('E', 'K'), ('F', 'M'), ('F', 'O'), ('M', 'P'), ('K', 'O'),
-            ('P', 'C'), ('O', 'C')
+            ('N', 'J'), 
+            ('J', 'I'), 
+            ('I', 'U'), 
+            ('U', 'A'), ('U', 'L'),
+            ('Q', 'U'), 
+            ('T', 'Q'), ('T', 'L'), 
+            ('L', 'B'), 
+            ('B', 'H'),
+            ('H', 'D'), 
+            ('D', 'R'), 
+            ('R', 'E'), 
+            ('E', 'G'), ('E', 'F'), ('E', 'K'), 
+            ('F', 'M'), ('F', 'O'), 
+            ('M', 'P'), 
+            ('K', 'O'),
+            ('P', 'C'), 
+            ('O', 'C')
         ]
+
+        self.SURIGAO_DEL_NORTE_DISTANCE = {
+            'Alegria': 46.3,
+            'Bacuag': 38.7,
+            'Burgos': 104,
+            'Claver': 55.1,
+            'Dapa': 65.2,
+            'Del Carmen': 87.3,
+            'General Luna': 80.4,
+            'Gigaquit': 52.7,
+            'Mainit': 36.1,
+            'Malimono': 30.9,
+            'Pilar': 90.70,
+            'Placer': 31.8, 
+            'San Benito': 94.2,
+            'San Francisco': 10.6,
+            'San Isidro': 93.5,
+            'Santa Monica': 102,
+            'Sison': 19.3,
+            'Socorro': 95.7,
+            'Surigao City': 0,
+            'Tagana-an': 23.5,
+            'Tubod': 35.2,
+        }
+
+        self.SURIGAO_DEL_NORTE_DIRECTION = {
+            'Alegria': 37.57,
+            'Bacuag': 25.95,
+            'Burgos': 68.45,
+            'Claver': 35.67,
+            'Dapa': 61.45,
+            'Del Carmen': 54.70,
+            'General Luna': 72.12,
+            'Gigaquit': 21.20,
+            'Mainit': 28.06,
+            'Malimono': 21.70,
+            'Pilar': 67.00,
+            'Placer': 19.16,
+            'San Benito': 59.33,
+            'San Francisco': 7.98,
+            'San Isidro': 67.00,
+            'Santa Monica': 64.70,
+            'Sison': 15.30,
+            'Socorro': 52.22,
+            'Surigao City': 0,
+            'Tagana-an': 14.35,
+            'Tubod': 27.67,
+        }
 
         self.nodes = {}
         self.draw_graph()
@@ -51,10 +104,6 @@ class GraphApp:
         frame = tk.Frame(root)
         frame.pack(side=tk.RIGHT, fill=tk.Y)
         self.display_node_list(frame)
-
-        self.astar = AStarLogic(self.canvas, self.update_node_color, self.show_goal_message)
-        self.astar.set_heuristics(self.calculate_heuristics())
-        self.start_astar_search()
 
     def draw_graph(self):
         self.draw_nodes()
@@ -85,26 +134,21 @@ class GraphApp:
         label = tk.Label(frame, text="Node List", font=FONT)
         label.pack()
         for node in self.positions.keys():
-            lbl = tk.Label(frame, text=node, font=NORMAL_FONT)
+            cost = self.SURIGAO_DEL_NORTE_DIRECTION.get(node, "N/A")
+            distance = self.SURIGAO_DEL_NORTE_DISTANCE.get(node, "N/A")
+            lbl = tk.Label(frame, text=f"{node} - Cost: {cost} - Distance: {distance} km", font=NORMAL_FONT)
             lbl.pack()
 
-    def update_node_color(self, node, color):
-        x, y = self.positions[node]
-        self.canvas.create_oval(x - NODE_RADIUS, y - NODE_RADIUS, x + NODE_RADIUS, y + NODE_RADIUS, outline="black", width=2, fill=color)
+    def update_node_color(self, node, color, animate=True):
+        if node in self.nodes:
+            self.logic.node_colors[node] = color
+            self.canvas.itemconfig(self.nodes[node], fill=color)
+            if animate:
+                self.root.update()
+                time.sleep(time_seconds)
 
     def show_goal_message(self, goal_node):
         print(f"Goal {goal_node} reached!")
-
-    def calculate_heuristics(self):
-        goal = 'S'
-        heuristics = {}
-        for node, (x, y) in self.positions.items():
-            gx, gy = self.positions[goal]
-            heuristics[node] = math.sqrt((x - gx) ** 2 + (y - gy) ** 2)
-        return heuristics
-
-    def start_astar_search(self):
-        self.astar.a_star('A', 'S')
 
 if __name__ == "__main__":
     root = tk.Tk()

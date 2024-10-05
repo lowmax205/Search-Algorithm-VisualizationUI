@@ -1,41 +1,38 @@
-from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED
+from queue import PriorityQueue
+from source import SURIGAO_DEL_NORTE_DISTANCE as costs, ORIGINAL_HEURISTICS as heuristics
 from source import BaseSearchLogic
 
 class AStarLogic(BaseSearchLogic):
-    def __init__(self, canvas, update_node_color, show_goal_message):
-        super().__init__(canvas, update_node_color, show_goal_message)
-        self.heuristics = {}
-        self.g_costs = {}
+    def astar(self, start_node, goal_node):
+        open_list = PriorityQueue()
+        open_list.put((0, start_node))
+        came_from = {}
+        g_score = {node: float('inf') for node in self.positions}
+        g_score[start_node] = 0
 
-    def set_heuristics(self, heuristics):
-        self.heuristics = heuristics
-
-    def a_star(self, start_node, goal_node=None):
-        open_list = [start_node]
-        visited = set()
-        self.g_costs = {start_node: 0}
-
-        while open_list:
-            open_list.sort(key=lambda node: self.g_costs.get(node, float('inf')) + self.heuristics.get(node, float('inf')))
-            current_node = open_list.pop(0)
-
-            self.update_node_color(current_node, COLOR_VISITING)
-
+        while not open_list.empty():
+            current_f, current_node = open_list.get()
+            
+            self.update_node_color(current_node, 'yellow')
             if current_node == goal_node:
-                self.update_node_color(current_node, COLOR_GOAL)
                 self.show_goal_message(goal_node)
+                self.reconstruct_path(came_from, start_node, goal_node)
                 return
+            
+            self.update_node_color(current_node, 'green')
+            
+            for neighbor, cost in self.ucs_get_neighbors(current_node):
+                tentative_g_score = g_score[current_node] + cost
+                if tentative_g_score < g_score[neighbor]:
+                    came_from[neighbor] = current_node
+                    g_score[neighbor] = tentative_g_score
+                    f_score = g_score[neighbor] + heuristics.get(neighbor, float('inf'))
+                    open_list.put((f_score, neighbor))
+        
+        return None
 
-            visited.add(current_node)
-            self.update_node_color(current_node, COLOR_VISITED)
-
-            for neighbor in self.get_neighbors(current_node):
-                tentative_g_cost = self.g_costs[current_node] + self.get_edge_weight(current_node, neighbor)
-
-                if neighbor not in visited and (neighbor not in open_list or tentative_g_cost < self.g_costs.get(neighbor, float('inf'))):
-                    self.g_costs[neighbor] = tentative_g_cost
-                    open_list.append(neighbor)
-                    self.update_node_color(neighbor, COLOR_VISITING)
-
-        print("Goal not reachable from the starting node.")
-
+    def reconstruct_path(self, came_from, start_node, goal_node):
+        current = goal_node
+        while current in came_from:
+            current = came_from[current]
+            self.update_node_color(current, 'blue', animate=True)
