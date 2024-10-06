@@ -1,4 +1,4 @@
-import tkinter as tk
+import customtkinter as tk
 import time
 import math
 from tkinter import messagebox
@@ -24,10 +24,13 @@ class TreeVisualizer:
         self.root = root
         self.root.title("Search Algorithm Visualization")
 
-        self.main_frame = tk.Frame(self.root)
+        tk.set_appearance_mode("light")  # or "light"
+        tk.set_default_color_theme("green")  # or "green", "dark-blue"
+        
+        self.main_frame = tk.CTkFrame(self.root)
         self.main_frame.pack(pady=10)
 
-        self.canvas = tk.Canvas(self.main_frame, width=600, height=500)
+        self.canvas = tk.CTkCanvas(self.main_frame, width=600, height=500)
         self.canvas.grid(row=0, column=0, columnspan=2, pady=10)
 
         self.positions = {
@@ -57,12 +60,20 @@ class TreeVisualizer:
         self.selected_informed_algorithm = tk.StringVar()
         self.selected_informed_algorithm.set("None") 
 
-        tk.Label(self.main_frame, text="Select Uninformed Algorithm:").grid(row=1, column=0, padx=5, pady=5)
-        uninformed_menu = tk.OptionMenu(self.main_frame, self.selected_uninformed_algorithm, "None", "BFS", "DFS", "DLS", "IDS", "UCS", command=self.update_algorithm)
+        tk.CTkLabel(self.main_frame, text="Select Uninformed Algorithm:").grid(row=1, column=0, padx=5, pady=5)
+        uninformed_menu = tk.CTkOptionMenu(
+            self.main_frame,
+            variable=self.selected_uninformed_algorithm, 
+            values=["None", "BFS", "DFS", "DLS", "IDS", "UCS"], 
+            command=self.update_algorithm)
         uninformed_menu.grid(row=1, column=1, padx=5, pady=5)
 
-        tk.Label(self.main_frame, text="Select Informed Algorithm:").grid(row=2, column=0, padx=5, pady=5)
-        informed_menu = tk.OptionMenu(self.main_frame, self.selected_informed_algorithm, "None", "GBFS", "A-star", command=self.update_algorithm)
+        tk.CTkLabel(self.main_frame, text="Select Informed Algorithm:").grid(row=2, column=0, padx=5, pady=5)
+        informed_menu = tk.CTkOptionMenu(
+            self.main_frame, 
+            variable=self.selected_informed_algorithm, 
+            values=["None", "GBFS", "A-star"], 
+            command=self.update_algorithm)
         informed_menu.grid(row=2, column=1, padx=5, pady=5)
 
         self.logic = None
@@ -175,15 +186,15 @@ class TreeVisualizer:
         
     # Create the UI for inputting start and goal nodes.
     def create_input_ui(self):
-        tk.Label(self.main_frame, text="Start Node:").grid(row=3, column=0, padx=5, pady=5)
-        self.start_node_entry = tk.Entry(self.main_frame, width=5)
+        tk.CTkLabel(self.main_frame, text="Start Node:").grid(row=3, column=0, padx=5, pady=5)
+        self.start_node_entry = tk.CTkEntry(self.main_frame, width=140)
         self.start_node_entry.grid(row=3, column=1, padx=5, pady=5)
 
-        tk.Label(self.main_frame, text="Goal Node (Optional):").grid(row=4, column=0, padx=5, pady=5)
-        self.goal_node_entry = tk.Entry(self.main_frame, width=5)
+        tk.CTkLabel(self.main_frame, text="Goal Node (Optional):").grid(row=4, column=0, padx=5, pady=5)
+        self.goal_node_entry = tk.CTkEntry(self.main_frame, width=140)
         self.goal_node_entry.grid(row=4, column=1, padx=5, pady=5)
 
-        self.start_button = tk.Button(self.main_frame, text="Start", command=self.start_function)
+        self.start_button = tk.CTkButton(self.main_frame, text="Start", command=self.start_function)
         self.start_button.grid(row=5, column=0, columnspan=2, pady=10)
         
     # Check if a given node is valid based on the defined positions.
@@ -276,6 +287,6 @@ class TreeVisualizer:
         self.root.mainloop()
 
 if __name__ == "__main__":
-    root = tk.Tk() 
+    root = tk.CTk() 
     visualizer = TreeVisualizer(root) 
     visualizer.run() 

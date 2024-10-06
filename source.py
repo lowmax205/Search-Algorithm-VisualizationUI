@@ -21,53 +21,6 @@ ORIGINAL_HEURISTICS = {
     'M': 4,
     'N': 3
 }
-SURIGAO_DEL_NORTE_DISTANCE = {
-        'Alegria': 46.3,
-        'Bacuag': 38.7,
-        'Burgos': 104,
-        'Claver': 55.1,
-        'Dapa': 65.2,
-        'Del Carmen': 87.3,
-        'General Luna': 80.4,
-        'Gigaquit': 52.7,
-        'Mainit': 36.1,
-        'Malimono': 30.9,
-        'Pilar': 90.70,
-        'Placer': 31.8, 
-        'San Benito': 94.2,
-        'San Francisco': 10.6,
-        'San Isidro': 93.5,
-        'Santa Monica': 102,
-        'Sison': 19.3,
-        'Socorro': 95.7,
-        'Surigao City':0,
-        'Tagana-an': 23.5,
-        'Tubod': 35.2,
-        }
-
-SURIGAO_DEL_NORTE_DIRECTION = {
-    'Alegria': 37.57,
-    'Bacuag': 25.95,
-    'Burgos': 68.45,
-    'Claver': 35.67,
-    'Dapa': 61.45,
-    'Del Carmen': 54.70,
-    'General Luna': 72.12,
-    'Gigaquit': 21.20,
-    'Mainit': 28.06,
-    'Malimono': 21.70,
-    'Pilar': 67.00,
-    'Placer': 19.16,
-    'San Benito': 59.33,
-    'San Francisco': 7.98,
-    'San Isidro': 67.00,
-    'Santa Monica': 64.70,
-    'Sison': 15.30,
-    'Socorro': 52.22,
-    'Surigao City': 0,
-    'Tagana-an': 14.35,
-    'Tubod': 27.67,
-}
 
 class BaseSearchLogic:
     # Initialize with canvas, functions to update node color and show goal message
