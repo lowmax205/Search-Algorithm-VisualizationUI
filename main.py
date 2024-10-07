@@ -24,8 +24,8 @@ class TreeVisualizer:
         self.root = root
         self.root.title("Search Algorithm Visualization")
 
-        tk.set_appearance_mode("light")  # or "light"
-        tk.set_default_color_theme("green")  # or "green", "dark-blue"
+        tk.set_appearance_mode("dark")
+        tk.set_default_color_theme("dark-blue")
         
         self.main_frame = tk.CTkFrame(self.root)
         self.main_frame.pack(pady=10)
