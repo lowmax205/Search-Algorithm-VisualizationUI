@@ -9,10 +9,6 @@ NORMAL_FONT = ('Arial', 12)
 NODE_RADIUS = 20
 time_seconds = 0.2
 
-COLOR_VISITING = "yellow"
-COLOR_GOAL = "green"
-COLOR_VISITED = "blue"
-
 class GraphApp:
     def __init__(self, root):
         self.root = root
@@ -50,60 +46,54 @@ class GraphApp:
             ('O', 'C')
         ]
 
-        self.SURIGAO_DEL_NORTE_DISTANCE = {
-            'Alegria': 46.3,
-            'Bacuag': 38.7,
-            'Burgos': 104,
-            'Claver': 55.1,
-            'Dapa': 65.2,
-            'Del Carmen': 87.3,
-            'General Luna': 80.4,
-            'Gigaquit': 52.7,
-            'Mainit': 36.1,
-            'Malimono': 30.9,
-            'Pilar': 90.70,
-            'Placer': 31.8, 
-            'San Benito': 94.2,
-            'San Francisco': 10.6,
-            'San Isidro': 93.5,
-            'Santa Monica': 102,
-            'Sison': 19.3,
-            'Socorro': 95.7,
-            'Surigao City': 0,
-            'Tagana-an': 23.5,
-            'Tubod': 35.2,
-        }
-
-        self.SURIGAO_DEL_NORTE_DIRECTION = {
-            'Alegria': 37.57,
-            'Bacuag': 25.95,
-            'Burgos': 68.45,
-            'Claver': 35.67,
-            'Dapa': 61.45,
-            'Del Carmen': 54.70,
-            'General Luna': 72.12,
-            'Gigaquit': 21.20,
-            'Mainit': 28.06,
-            'Malimono': 21.70,
-            'Pilar': 67.00,
-            'Placer': 19.16,
-            'San Benito': 59.33,
-            'San Francisco': 7.98,
-            'San Isidro': 67.00,
-            'Santa Monica': 64.70,
-            'Sison': 15.30,
-            'Socorro': 52.22,
-            'Surigao City': 0,
-            'Tagana-an': 14.35,
-            'Tubod': 27.67,
-        }
-
         self.nodes = {}
+        self.logic = AStarLogic(self.canvas, self.update_node_color, self.show_goal_message)
+        self.logic.set_positions(self.positions)
+
         self.draw_graph()
 
         frame = tk.Frame(root)
         frame.pack(side=tk.RIGHT, fill=tk.Y)
-        self.display_node_list(frame)
+
+        self.start_label = tk.Label(frame, text="Start Node:", font=FONT)
+        self.start_label.pack()
+        self.start_entry = tk.Entry(frame)
+        self.start_entry.pack()
+
+        self.goal_label = tk.Label(frame, text="Goal Node:", font=FONT)
+        self.goal_label.pack()
+        self.goal_entry = tk.Entry(frame)
+        self.goal_entry.pack()
+
+        self.search_button = tk.Button(frame, text="Start A* Search", command=self.start_search)
+        self.search_button.pack()
+
+        #self.display_node_list(frame)
+    
+    # def display_node_list(self, frame):
+    #     label = tk.Label(frame, text="Node List", font=FONT)
+    #     label.pack()
+    #     subt = tk.Label(frame, text="Place              Cost               Distance", font=NORMAL_FONT)
+    #     subt.pack()
+
+    #     # Loop through positions to display node information
+    #     for node in self.positions.keys():
+    #         name = self.SURIGAO_DEL_NORTE.get(node, "N/A")
+    #         cost = self.SURIGAO_DEL_NORTE_COST.get(node, "N/A")
+    #         distance = self.SURIGAO_DEL_NORTE_DISTANCE.get(node, "N/A")
+
+    #         lbl = tk.Label(frame, text=f"{name}         -           {cost}          -       {distance} km")
+    #         lbl.pack()
+
+    def start_search(self):
+        start_node = self.start_entry.get().strip().upper()
+        goal_node = self.goal_entry.get().strip().upper()
+
+        if start_node in self.positions and goal_node in self.positions:
+            self.logic.reset_colors()  # Reset the colors before starting
+            self.logic.astar(start_node, goal_node)
+        else:
+            print("Invalid start or goal node.")
 
     def draw_graph(self):
         self.draw_nodes()
@@ -129,15 +119,6 @@ class GraphApp:
         end_x = x2 - r * math.cos(angle)
         end_y = y2 - r * math.sin(angle)
         self.canvas.create_line(start_x, start_y, end_x, end_y, arrow=tk.LAST, width=2)
-
-    def display_node_list(self, frame):
-        label = tk.Label(frame, text="Node List", font=FONT)
-        label.pack()
-        for node in self.positions.keys():
-            cost = self.SURIGAO_DEL_NORTE_DIRECTION.get(node, "N/A")
-            distance = self.SURIGAO_DEL_NORTE_DISTANCE.get(node, "N/A")
-            lbl = tk.Label(frame, text=f"{node} - Cost: {cost} - Distance: {distance} km", font=NORMAL_FONT)
-            lbl.pack()
 
     def update_node_color(self, node, color, animate=True):
         if node in self.nodes:
