@@ -90,7 +90,7 @@ class GraphApp:
         goal_node = self.goal_entry.get().strip().upper()
 
         if start_node in self.positions and goal_node in self.positions:
-            self.logic.reset_colors()  # Reset the colors before starting
+            self.logic.reset_colors()
             self.logic.astar(start_node, goal_node)
         else:
             print("Invalid start or goal node.")
