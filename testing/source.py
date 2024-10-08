@@ -1,5 +1,4 @@
-import math
-# Define constants for colors to be used for marking the status of nodes
+# Color constants
 COLOR_VISITED = 'green'
 COLOR_VISITING = 'yellow'
 COLOR_NOT_VISITED = 'white'
@@ -26,23 +25,3 @@ class BaseSearchLogic:
             
         if change == True:
             print("All nodes have been reset to 'not visited'.")
-            
-    # Return neighbors with associated costs for UCS (Uniform Cost Search)
-    def ucs_get_neighbors(self, node):
-        neighbors_with_costs = {
-            'A': [('B', 1), ('C', 2)],
-            'B': [('D', 4), ('E', 2)],
-            'C': [('F', 3), ('G', 2)],
-            'D': [('H', 7), ('I', 3)],
-            'E': [],
-            'F': [('J', 5), ('K', 4)],
-            'G': [],
-            'H': [('L', 6)],
-            'I': [('M', 3)],
-            'J': [('N', 2)],
-            'K': [],
-            'L': [],
-            'M': [],
-            'N': []
-        }
-        return neighbors_with_costs.get(node, [])
