@@ -23,4 +23,4 @@ The **Uniformed & Informed Search Algorithm** project aims to demonstrate how un
 
 ## 🛠️ For those who want's to HELP.
 
-Your support and contributions to **Uniformed Search Algorithm** are greatly appreciated! Feel free to suggest features, report issues, or contribute to the code. Every bit of help counts in making this app better for travelers everywhere. Thank you!
+Your support and contributions to **Uniformed & Informed Search Algorithm** are greatly appreciated! Feel free to suggest features, report issues, or contribute to the code. Every bit of help counts in making this app better for travelers everywhere. Thank you!
