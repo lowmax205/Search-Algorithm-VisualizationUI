@@ -46,7 +46,7 @@ class AStarLogic(BaseSearchLogic):
         came_from = {}
         g_score = {node: float('inf') for node in self.positions}
         g_score[start_node] = 0 
-
+        index = 0
         while not open_list.empty():
             current_f, current_node = open_list.get() 
 
@@ -57,14 +57,17 @@ class AStarLogic(BaseSearchLogic):
             if current_node == goal_node:
                 self.show_goal_message(goal_node)
                 self.reconstruct_path(came_from, start_node, goal_node)
+                
                 return
 
             self.update_node_color(current_node, COLOR_VISITED)
 
+            
             # Explore neighbors of the current node
             for neighbor, cost in self.get_neighbors(current_node):
+                index += 1
                 tentative_g_score = g_score[current_node] + cost
-
+                print(f"Current node{index} = {g_score[current_node]} + {cost} = {tentative_g_score}")
                 # If this path is better (lower g_score), update came_from and the scores
                 if tentative_g_score < g_score[neighbor]:
                     came_from[neighbor] = current_node
@@ -88,6 +91,15 @@ class AStarLogic(BaseSearchLogic):
     # Reconstruct and visualize the path from start_node to goal_node using came_from dictionary
     def reconstruct_path(self, came_from, start_node, goal_node):
         current = goal_node
+        print(f"Path : ", end="")
+        path = []
         while current in came_from:
             current = came_from[current]
+            #print(f"current test: {current}")
+            path.append(current)
             self.update_node_color(current, COLOR_PATH, animate=True) 
+        path.reverse()
+        print(" -> ".join([p_ for p_ in path]), end=" ")
+        print(f"-> Goal : {goal_node}")
+            
+        

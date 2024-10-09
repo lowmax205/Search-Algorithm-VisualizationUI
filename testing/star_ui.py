@@ -45,6 +45,77 @@ class GraphApp:
             ('P', 'C'), 
             ('O', 'C')
         ]
+        
+        self.SURIGAO_DEL_NORTE_DISTANCE = {
+                'A': 46.3,
+                'B': 38.7,
+                'C': 104,
+                'D': 55.1,
+                'E': 65.2,
+                'F': 87.3,
+                'G': 80.4,
+                'H': 52.7,
+                'I': 36.1,
+                'J': 30.9,
+                'K': 90.70,
+                'L': 31.8, 
+                'M': 94.2,
+                'N': 10.6,
+                'O': 93.5,
+                'P': 102,
+                'Q': 19.3,
+                'R': 95.7,
+                'S':0,
+                'T': 23.5,
+                'U': 35.2,
+                }
+
+        self.SURIGAO_DEL_NORTE_COST = {
+            'A': 37.57,
+            'B': 25.95,
+            'C': 68.45,
+            'D': 35.67,
+            'E': 61.45,
+            'F': 54.70,
+            'G': 72.12,
+            'H': 21.20,
+            'I': 28.06,
+            'J': 21.70,
+            'K': 67.00,
+            'L': 19.16,
+            'M': 59.33,
+            'N': 7.98,
+            'O': 67.00,
+            'P': 64.70,
+            'Q': 15.30,
+            'R': 52.22,
+            'S': 0,
+            'T': 14.35,
+            'U': 27.67
+        }
+        self.SURIGAO_DEL_NORTE = {
+            'A': 'Alegria',
+            'B': 'Bacuag',
+            'C': 'Burgos',
+            'D': 'Claver',
+            'E': 'Dapa',
+            'F': 'Del Carmen',
+            'G': 'General Luna',
+            'H': 'Gigaquit',
+            'I': 'Mainit',
+            'J': 'Malimono',
+            'K': 'Pilar',
+            'L': 'Placer',
+            'M': 'San Benito',
+            'N': 'San Francisco',
+            'O': 'San Isidro',
+            'P': 'Santa Monica',
+            'Q': 'Sison',
+            'R': 'Socorro',
+            'S': 'Surigao City',
+            'T': 'Tagana-an',
+            'U': 'Tubod'
+        }
 
         self.nodes = {}
         self.logic = AStarLogic(self.canvas, self.update_node_color, self.show_goal_message)
@@ -68,22 +139,22 @@ class GraphApp:
         self.search_button = tk.Button(frame, text="Start A* Search", command=self.start_search)
         self.search_button.pack()
 
-        #self.display_node_list(frame)
+        self.display_node_list(frame)
     
-    # def display_node_list(self, frame):
-    #     label = tk.Label(frame, text="Node List", font=FONT)
-    #     label.pack()
-    #     subt = tk.Label(frame, text="Place              Cost               Distance", font=NORMAL_FONT)
-    #     subt.pack()
+    def display_node_list(self, frame):
+        label = tk.Label(frame, text="Node List", font=FONT)
+        label.pack()
+        subt = tk.Label(frame, text="Place              Cost               Distance", font=NORMAL_FONT)
+        subt.pack()
 
-    #     # Loop through positions to display node information
-    #     for node in self.positions.keys():
-    #         name = self.SURIGAO_DEL_NORTE.get(node, "N/A")
-    #         cost = self.SURIGAO_DEL_NORTE_COST.get(node, "N/A")
-    #         distance = self.SURIGAO_DEL_NORTE_DISTANCE.get(node, "N/A")
+        # Loop through positions to display node informatio
+        for node in self.positions.keys():
+            name = self.SURIGAO_DEL_NORTE.get(node, "N/A")
+            cost = self.SURIGAO_DEL_NORTE_COST.get(node, "N/A")
+            distance = self.SURIGAO_DEL_NORTE_DISTANCE.get(node, "N/A")
 
-    #         lbl = tk.Label(frame, text=f"{name}         -           {cost}          -       {distance} km")
-    #         lbl.pack()
+            lbl = tk.Label(frame, text=f"{name}         -           {cost}          -       {distance} km")
+            lbl.pack()
 
     def start_search(self):
         start_node = self.start_entry.get().strip().upper()
