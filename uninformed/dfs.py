@@ -5,26 +5,44 @@ class DFSLogic(BaseSearchLogic):
     def dfs(self, start_node, goal_node=None):
         stack = [start_node]
         visited = set()
+        parents = {start_node: None}
 
         while stack:
-            current_node = stack.pop()  # Pop the top node from the stack
+            current_node = stack.pop()
 
             if current_node not in visited:
                 print(f"Visiting: {current_node}")
-                self.update_node_color(current_node, COLOR_VISITING)  # Mark node as being visited
+                self.update_node_color(current_node, COLOR_VISITING)
 
             if current_node == goal_node:
+                # When the goal is reached, print the path
+                path = self.reconstruct_path(parents, goal_node)
+                print("Path found:", " -> ".join(path))
+                
                 print(f"Goal: {current_node}")
-                self.update_node_color(current_node, COLOR_GOAL)  # Goal node found
-                self.show_goal_message(goal_node)  # Notify goal achievement
+                self.update_node_color(current_node, COLOR_GOAL) 
+                self.show_goal_message(goal_node) 
                 return
 
-            visited.add(current_node)  # Mark current node as visited
+            visited.add(current_node)  
             print(f"Visited: {current_node}")
-            self.update_node_color(current_node, COLOR_VISITED)  # Mark node as fully explored
+            self.update_node_color(current_node, COLOR_VISITED) 
 
-            for neighbor in reversed(self.get_neighbors(current_node)):  # Reverse for DFS order
+            for neighbor in reversed(self.get_neighbors(current_node)): 
                 if neighbor not in visited and neighbor not in stack:
-                    stack.append(neighbor)  # Add unvisited neighbors to the stack
+                    stack.append(neighbor)
+                    parents[neighbor] = current_node
                     print(f"Visiting neighbor: {neighbor}")
-                    self.update_node_color(neighbor, COLOR_VISITING)  # Mark neighbor as being visited
+                    self.update_node_color(neighbor, COLOR_VISITING) 
+
+    def reconstruct_path(self, parents, goal_node):
+
+        path = []
+        current_node = goal_node
+
+        while current_node is not None:
+            path.append(current_node)
+            current_node = parents[current_node]
+        
+        path.reverse()
+        return path

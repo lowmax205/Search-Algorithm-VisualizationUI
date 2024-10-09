@@ -7,58 +7,74 @@ class DFS_DLSLogic(BaseSearchLogic):
         visited = set() 
 
         while queue:
-            current_node, depth = queue.pop(0)  # Dequeue the front node
+            current_node, depth = queue.pop(0)  
 
             if current_node == goal_node:
-                return depth  # Return the depth at which the goal is found
+                return depth 
 
             if current_node not in visited:
-                visited.add(current_node)  # Mark node as visited
+                visited.add(current_node)  
 
                 for neighbor in self.get_neighbors(current_node):
                     if neighbor not in visited:
-                        queue.append((neighbor, depth + 1))  # Add neighbors with updated depth
+                        queue.append((neighbor, depth + 1)) 
 
-        return float('inf')  # Return infinity if goal not found
+        return float('inf') 
 
     def dls(self, start_node, goal_node=None):
-        depth_limit = self.calculate_goal_depth(start_node, goal_node) if goal_node else float('inf')  # Set depth limit
-        stack = [(start_node, 0)]  # Initialize stack with start node and depth 0
-        visited = set()  # Set to track visited nodes
+        depth_limit = self.calculate_goal_depth(start_node, goal_node) if goal_node else float('inf') 
+        stack = [(start_node, 0)] 
+        visited = set() 
         current_depth = 0
 
-        next_level_stack = []  # Stack for next level nodes
+        parents = {start_node: None}
+        next_level_stack = []  
 
         while stack or next_level_stack:
             if not stack:
-                stack, next_level_stack = next_level_stack, []  # Move to the next depth level
+                stack, next_level_stack = next_level_stack, []  
                 current_depth += 1
                 print(f"Proceeding to depth level {current_depth}")
                 if current_depth > depth_limit:
                     print("Depth limit reached. Stopping further exploration.")
                     return
-            current_node, depth = stack.pop()  # Pop top node from the stack
+            current_node, depth = stack.pop()  
 
             if current_node not in visited:
                 print("Visiting:", current_node)
-                self.update_node_color(current_node, COLOR_VISITING)  # Mark node as being visited
+                self.update_node_color(current_node, COLOR_VISITING) 
 
                 if current_node == goal_node:
+                    path = self.reconstruct_path(parents, goal_node)
+                    print("Path found:", " -> ".join(path))
+                    
                     print("Goal:", current_node)
-                    self.update_node_color(current_node, COLOR_GOAL)  # Goal node found
-                    self.show_goal_message(goal_node)  # Notify goal achievement
+                    self.update_node_color(current_node, COLOR_GOAL)  
+                    self.show_goal_message(goal_node)  
                     return
 
-                visited.add(current_node)  # Mark node as visited
+                visited.add(current_node)
                 print("Visited:", current_node)
-                self.update_node_color(current_node, COLOR_VISITED)  # Mark node as fully explored
+                self.update_node_color(current_node, COLOR_VISITED) 
 
                 for neighbor in reversed(self.get_neighbors(current_node)):
                     if neighbor not in visited and all(neighbor != n for n, d in stack + next_level_stack):
                         if depth == current_depth:
-                            next_level_stack.append((neighbor, depth + 1))  # Add to next level
+                            next_level_stack.append((neighbor, depth + 1))  
                         else:
-                            stack.append((neighbor, depth + 1))  # Add to current level stack
+                            stack.append((neighbor, depth + 1))  
 
+                        parents[neighbor] = current_node 
                         print("Adding neighbor:", neighbor, "at depth:", depth + 1)
-                        self.update_node_color(neighbor, COLOR_VISITING)  # Mark neighbor as being visited
+                        self.update_node_color(neighbor, COLOR_VISITING) 
+
+    def reconstruct_path(self, parents, goal_node):
+        path = []
+        current_node = goal_node
+
+        while current_node is not None:
+            path.append(current_node)
+            current_node = parents[current_node]  # Move to the parent
+        
+        path.reverse()  # Reverse the path to get it from start to goal
+        return path

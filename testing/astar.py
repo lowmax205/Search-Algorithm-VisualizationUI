@@ -91,15 +91,15 @@ class AStarLogic(BaseSearchLogic):
     # Reconstruct and visualize the path from start_node to goal_node using came_from dictionary
     def reconstruct_path(self, came_from, start_node, goal_node):
         current = goal_node
-        print(f"Path : ", end="")
         path = []
+        path.append(goal_node)
+
         while current in came_from:
             current = came_from[current]
-            #print(f"current test: {current}")
             path.append(current)
-            self.update_node_color(current, COLOR_PATH, animate=True) 
+            self.update_node_color(current, COLOR_PATH, animate=True)
+
         path.reverse()
-        print(" -> ".join([p_ for p_ in path]), end=" ")
-        print(f"-> Goal : {goal_node}")
-            
         
+        print("Path:", " -> ".join(path))
+        print(f"-> Goal: {goal_node}")

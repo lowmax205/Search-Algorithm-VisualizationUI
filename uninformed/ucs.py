@@ -31,7 +31,7 @@ class UCSLogic(BaseSearchLogic):
             if current_node == goal_node:
                 # When the goal is reached, print the path and total cost
                 print("Goal:", current_node, "reached with travel cost:", total_travel_cost)
-                path, path_costs = self.reconstruct_path(start_node, goal_node, costs)
+                path, path_costs = self.reconstruct_path(start_node, goal_node)
                 print("Path:", " -> ".join(path))
                 print("Path costs:", path_costs)
                 print(f"Total path cost: {sum(path_costs)}")
@@ -59,16 +59,15 @@ class UCSLogic(BaseSearchLogic):
         # If the loop exits without finding the goal
         print(f"Goal node '{goal_node}' was not reached. Total travel cost: {total_travel_cost}")
         
-    #Reconstruct the path from start_node to goal_node and return it with the path costs.
-    def reconstruct_path(self, start_node, goal_node, costs):
-        
+    # Reconstruct the path from start_node to goal_node and return it with the path costs.
+    def reconstruct_path(self, start_node, goal_node):
         path = []
         path_costs = []
         current_node = goal_node
         
         while current_node is not None:
             path.append(current_node)
-            path_costs.append(costs[current_node])
+            path_costs.append(self.node_costs[current_node])
             current_node = self.parents[current_node]
 
         path.reverse()

@@ -15,7 +15,7 @@ from informed.gbfs import GBFSLogic
 
 FONT = ('Arial', 14, 'bold')
 NODE_RADIUS = 20
-time_seconds = 0.2
+time_seconds = 0.1
 
 class TreeVisualizer:
     start_count = 0
