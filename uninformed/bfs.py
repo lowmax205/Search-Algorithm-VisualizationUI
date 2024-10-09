@@ -14,6 +14,11 @@ class BFSLogic(BaseSearchLogic):
                 self.update_node_color(current_node, COLOR_VISITING)  # Mark the node as being visited
 
             if current_node == goal_node:
+                
+                # When the goal is reached, print the path and total cost
+                path = self.reconstruct_path(visited, goal_node,)
+                print("Path:", " -> ".join(path))
+                
                 print(f"Goal: {current_node}")
                 self.update_node_color(current_node, COLOR_GOAL)  # Goal node found
                 self.show_goal_message(goal_node)  # Notify goal achievement
@@ -29,3 +34,15 @@ class BFSLogic(BaseSearchLogic):
                     queue.append(neighbor)  
                     print(f"Visiting neighbor: {neighbor}")
                     self.update_node_color(neighbor, COLOR_VISITING)  # Mark neighbor as being visited
+                    
+    #Reconstruct the path from start_node to goal_node and return it with the path costs.
+    def reconstruct_path(self, visited, goal_node):
+        
+        path = []
+        current_node = goal_node
+        
+        while current_node in visited:
+            path.append(current_node)
+
+        path.reverse()
+        return path
