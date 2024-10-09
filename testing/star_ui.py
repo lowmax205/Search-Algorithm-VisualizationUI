@@ -93,7 +93,7 @@ class GraphApp:
             'T': 14.35,
             'U': 27.67
         }
-        
+                
         self.SURIGAO_DEL_NORTE = {
             'A': 'Alegria',
             'B': 'Bacuag',
