@@ -244,6 +244,8 @@ class TreeVisualizer:
                     self.logic.set_heuristics(self.heuristics)
                     self.update_node_heuristics_display()
                 self.logic.greedy_bfs(start_node, goal_node)
+            elif informed_algorithm == "Astar":
+                pass
 
         else:
             messagebox.showerror("Error", "Please select only one algorithm type: either Uninformed or Informed.")

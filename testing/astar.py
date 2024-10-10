@@ -55,9 +55,8 @@ class AStarLogic(BaseSearchLogic):
             
             # If the goal node is reached, reconstruct the path and exit
             if current_node == goal_node:
-                self.show_goal_message(goal_node)
                 self.reconstruct_path(came_from, start_node, goal_node)
-                
+                self.show_goal_message(goal_node)
                 return
 
             self.update_node_color(current_node, COLOR_VISITED)
