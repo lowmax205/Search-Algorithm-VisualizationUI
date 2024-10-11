@@ -18,10 +18,10 @@ class BaseSearchLogic:
         self.node_colors = {node: COLOR_NOT_VISITED for node in self.positions}
         
     # Reset all node colors to 'not visited'
-    def reset_colors(self, change = False):
+    def reset_colors(self, animate=False):
         self.node_colors = {node: COLOR_NOT_VISITED for node in self.node_colors}
         for node in self.node_colors:
-            self.update_node_color(node, COLOR_NOT_VISITED, animate=False)  # Instant reset
+            self.update_node_color(node, COLOR_NOT_VISITED)
             
-        if change == True:
+        if animate == True:
             print("All nodes have been reset to 'not visited'.")
