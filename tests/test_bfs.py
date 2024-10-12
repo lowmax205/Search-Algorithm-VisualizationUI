@@ -13,10 +13,18 @@ class TestBFS:
         bfs_logic.graph = {
             'A': ['B', 'C'],
             'B': ['D', 'E'],
-            'C': ['F'],
-            'D': [],
-            'E': ['F'],
-            'F': []
+            'C': ['F', 'G'],
+            'D': ['H', 'I'],
+            'E': [],
+            'F': ['J', 'K'],
+            'G': [],
+            'H': ['L'],
+            'I': ['M'],
+            'J': ['N'],
+            'K': [],
+            'L': [],
+            'M': [],
+            'N': []
         }
 
         # Run BFS
@@ -29,14 +37,47 @@ class TestBFS:
         # Define a graph with no path to the goal
         bfs_logic.graph = {
             'A': ['B', 'C'],
-            'B': ['D'],
-            'C': ['E'],
-            'D': [],
-            'E': []
+            'B': ['D', 'E'],
+            'C': ['F', 'G'],
+            'D': ['H', 'I'],
+            'E': [],
+            'F': ['J', 'K'],
+            'G': [],
+            'H': ['L'],
+            'I': ['M'],
+            'J': ['N'],
+            'K': [],
+            'L': [],
+            'M': [],
+            'N': []
         }
 
         # Run BFS
         path = bfs_logic.bfs('A', 'F')
+
+        # Assert that no path is found
+        assert path is None
+
+    def test_bfs_goal_not_in_graph(self, bfs_logic):
+        # Define a graph where the goal is not present
+        bfs_logic.graph = {
+            'A': ['B', 'C'],
+            'B': ['D', 'E'],
+            'C': ['F', 'G'],
+            'D': ['H', 'I'],
+            'E': [],
+            'F': ['J', 'K'],
+            'G': [],
+            'H': ['L'],
+            'I': ['M'],
+            'J': ['N'],
+            'K': [],
+            'L': [],
+            'M': [],
+            'N': []
+        }
+        # Run BFS
+        path = bfs_logic.bfs('A', 'Z')
 
         # Assert that no path is found
         assert path is None

@@ -44,4 +44,5 @@ class BFSLogic(BaseSearchLogic):
                     parents[neighbor] = current_node 
                     print(f"Visiting neighbor: {neighbor}")
                     self.update_node_color(neighbor, COLOR_VISITING) 
+        print("No path found")
         return None  # If no path is found
