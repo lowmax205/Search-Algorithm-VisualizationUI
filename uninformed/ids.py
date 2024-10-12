@@ -1,4 +1,4 @@
-from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED
+from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED, reconstruct_path
 from source import BaseSearchLogic
 
 class IDSLogic(BaseSearchLogic):
@@ -24,42 +24,29 @@ class IDSLogic(BaseSearchLogic):
                 if current_level:
                     print(f"Proceeding to depth level: {current_level[0][1]}")
 
-            node, depth = current_level.pop(0) 
+            current_node, depth = current_level.pop(0) 
 
             if depth > depth_limit: 
                 continue
             
-            if node not in visited:
-                print(f"Visiting: {node} at depth {depth}")
-                self.update_node_color(node, COLOR_VISITING)  
+            if current_node not in visited:
+                print(f"Visiting: {current_node} at depth {depth}")
+                self.update_node_color(current_node, COLOR_VISITING)  
 
-                if node == goal_node: 
-                    path = self.reconstruct_path(parents, goal_node)
-                    print("Path found:", " -> ".join(path))
-                    
-                    print(f"Goal: {node} reached.")
-                    self.update_node_color(node, COLOR_GOAL)
-                    self.show_goal_message(goal_node)
+                if current_node == goal_node:
+                    reconstruct_path(parents, start_node, goal_node, self.node_costs)
+                    print(f"Goal node: {current_node}")
+                    self.update_node_color(current_node, COLOR_GOAL) 
+                    self.show_goal_message(goal_node) 
                     return True
 
-                visited.add(node) 
-                self.update_node_color(node, COLOR_VISITED)
+                visited.add(current_node) 
+                self.update_node_color(current_node, COLOR_VISITED)
 
                 if depth < depth_limit:  
-                    for neighbor in self.get_neighbors(node):
+                    for neighbor in self.get_neighbors(current_node):
                         if neighbor not in visited:
                             next_level.append((neighbor, depth + 1)) 
-                            parents[neighbor] = node  
+                            parents[neighbor] = current_node  
                             print(f"Adding Neighbor: {neighbor} at depth {depth + 1}")
         return False
-
-    def reconstruct_path(self, parents, goal_node):
-        path = []
-        current_node = goal_node
-
-        while current_node is not None:
-            path.append(current_node)
-            current_node = parents[current_node] 
-        
-        path.reverse() 
-        return path

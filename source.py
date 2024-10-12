@@ -86,4 +86,24 @@ class BaseSearchLogic:
             'N': []
         }
         return neighbors_with_costs.get(node, [])
-
+    
+def reconstruct_path(parents, start_node, goal_node, costs=None):
+        path = []
+        path_costs = []
+        current = goal_node
+        
+        while current is not None:
+            path.append(current)
+            if costs is not None:
+                path_costs.append(costs.get(current, 0))
+            current = parents[current]
+        
+        path.reverse()
+        
+        print(f"Starting Node: {start_node}")
+        print("Path found:", " -> ".join(path))
+        if costs:
+            print("Path costs:", path_costs)
+            print(f"Total path cost: {sum(path_costs)}")
+        
+        return path, path_costs

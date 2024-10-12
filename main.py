@@ -373,7 +373,7 @@ class TreeVisualizer:
         self.canvas.delete("all")
     
     def clear_node_heuristics_display(self):
-        for node, text_id in self.heuristic_texts.items():
+        for _, text_id in self.heuristic_texts.items():
             self.canvas.delete(text_id)
         self.heuristic_texts.clear()
         

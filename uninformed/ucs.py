@@ -1,5 +1,5 @@
 import heapq
-from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED
+from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED, reconstruct_path
 from source import BaseSearchLogic
 
 class UCSLogic(BaseSearchLogic):
@@ -20,7 +20,6 @@ class UCSLogic(BaseSearchLogic):
         while priority_queue:
             current_cost, current_node = heapq.heappop(priority_queue)
             
-            # Accumulate the total cost for all visited nodes (including non-optimal ones)
             total_travel_cost += current_cost
             
             if current_node not in visited:
@@ -29,14 +28,7 @@ class UCSLogic(BaseSearchLogic):
                 self.update_cost_display(current_node, current_cost)
 
             if current_node == goal_node:
-                # When the goal is reached, print the path and total cost
-                print("Goal:", current_node, "reached with travel cost:", total_travel_cost)
-                path, path_costs = self.reconstruct_path(start_node, goal_node)
-                print("Path:", " -> ".join(path))
-                print("Path costs:", path_costs)
-                print(f"Total path cost: {sum(path_costs)}")
-                
-                # Update display for the goal node
+                _x, path_costs = reconstruct_path(self.parents, start_node, goal_node, self.node_costs)
                 self.update_node_color(current_node, COLOR_GOAL)
                 self.update_cost_display(current_node, current_cost)
                 self.show_goal_message(f"Goal node '{goal_node}' reached. Total path cost: {sum(path_costs)}")
@@ -56,21 +48,4 @@ class UCSLogic(BaseSearchLogic):
                     self.update_node_color(neighbor, COLOR_VISITING)
                     self.update_cost_display(neighbor, new_cost)
 
-        # If the loop exits without finding the goal
         print(f"Goal node '{goal_node}' was not reached. Total travel cost: {total_travel_cost}")
-        
-    # Reconstruct the path from start_node to goal_node and return it with the path costs.
-    def reconstruct_path(self, start_node, goal_node):
-        print(f"Starting Node: {start_node}")
-        path = []
-        path_costs = []
-        current_node = goal_node
-        
-        while current_node is not None:
-            path.append(current_node)
-            path_costs.append(self.node_costs[current_node])
-            current_node = self.parents[current_node]
-
-        path.reverse()
-        path_costs.reverse()
-        return path, path_costs

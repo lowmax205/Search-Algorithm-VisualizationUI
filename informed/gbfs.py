@@ -1,4 +1,4 @@
-from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED
+from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED, reconstruct_path
 from source import BaseSearchLogic
 
 class GBFSLogic(BaseSearchLogic):
@@ -17,7 +17,6 @@ class GBFSLogic(BaseSearchLogic):
         parents = {start_node: None}
 
         while open_list:
-            # Sort open_list based on heuristic values (GBFS behavior)
             open_list.sort(key=lambda node: self.heuristics.get(node, float('inf')))
             current_node = open_list.pop(0)
 
@@ -25,10 +24,9 @@ class GBFSLogic(BaseSearchLogic):
                 print(f"Visiting: {current_node}")
                 self.update_node_color(current_node, COLOR_VISITING)
 
-            # Check if the current node is the goal
             if current_node == goal_node:
                 self.update_node_color(current_node, COLOR_GOAL)
-                self.reconstruct_path(parents, start_node, goal_node) 
+                path, path_costs = reconstruct_path(parents, start_node, goal_node, self.heuristics)
                 print(f"Goal: {current_node}")
                 self.show_goal_message(goal_node)
                 return
@@ -37,7 +35,6 @@ class GBFSLogic(BaseSearchLogic):
             print(f"Visited: {current_node}")
             self.update_node_color(current_node, COLOR_VISITED)
 
-            # Explore neighbors
             for neighbor in self.get_neighbors(current_node):
                 if neighbor not in visited and neighbor not in open_list:
                     open_list.append(neighbor)
@@ -50,12 +47,4 @@ class GBFSLogic(BaseSearchLogic):
 
                     self.update_node_color(neighbor, COLOR_VISITING)
 
-    def reconstruct_path(self, parents, start_node, goal_node):
-        print(f"Starting Node: {start_node}")
-        path = []
-        current = goal_node
-        while current is not None:
-            path.append(current)
-            current = parents[current]
-        path.reverse()
-        print("Path found:", " -> ".join(path))
+        print(f"Goal node '{goal_node}' was not reached.")
