@@ -51,6 +51,32 @@ class TreeVisualizer:
             'M': (250, 450),
             'N': (350, 450)
         }
+        
+        scale_x = 400 / 500
+        scale_y = 300 / 500
+        self.positions_star = {
+        'A': (int(350 * scale_x), int(800 * scale_y)),
+        'B': (int(600 * scale_x), int(700 * scale_y)),
+        'C': (int(850 * scale_x), int(50 * scale_y)),
+        'D': (int(700 * scale_x), int(800 * scale_y)),
+        'E': (int(700 * scale_x), int(400 * scale_y)),
+        'F': (int(750 * scale_x), int(300 * scale_y)),
+        'G': (int(900 * scale_x), int(400 * scale_y)),
+        'H': (int(650 * scale_x), int(750 * scale_y)),
+        'I': (int(250 * scale_x), int(650 * scale_y)),
+        'J': (int(150 * scale_x), int(600 * scale_y)),
+        'K': (int(900 * scale_x), int(300 * scale_y)),
+        'L': (int(500 * scale_x), int(650 * scale_y)),
+        'M': (int(650 * scale_x), int(250 * scale_y)),
+        'N': (int(100 * scale_x), int(450 * scale_y)),
+        'O': (int(900 * scale_x), int(200 * scale_y)),
+        'P': (int(750 * scale_x), int(150 * scale_y)),
+        'Q': (int(300 * scale_x), int(500 * scale_y)),
+        'R': (int(700 * scale_x), int(600 * scale_y)),
+        'S': (int(300 * scale_x), int(400 * scale_y)),
+        'T': (int(500 * scale_x), int(500 * scale_y)),
+        'U': (int(400 * scale_x), int(600 * scale_y)),
+    }
 
         self.heuristics = heuristics_list.copy()
         self.heuristic_texts = {} 
@@ -85,54 +111,6 @@ class TreeVisualizer:
         self.create_input_ui()
         
     # Initializes data specific to the graph, such as positions and edges for A star Search
-    def init_graph_data(self):
-        scale_x = 400 / 500
-        scale_y = 300 / 500
-        self.positions_star = {
-        'A': (int(350 * scale_x), int(800 * scale_y)),
-        'B': (int(600 * scale_x), int(700 * scale_y)),
-        'C': (int(850 * scale_x), int(50 * scale_y)),
-        'D': (int(700 * scale_x), int(800 * scale_y)),
-        'E': (int(700 * scale_x), int(400 * scale_y)),
-        'F': (int(750 * scale_x), int(300 * scale_y)),
-        'G': (int(900 * scale_x), int(400 * scale_y)),
-        'H': (int(650 * scale_x), int(750 * scale_y)),
-        'I': (int(250 * scale_x), int(650 * scale_y)),
-        'J': (int(150 * scale_x), int(600 * scale_y)),
-        'K': (int(900 * scale_x), int(300 * scale_y)),
-        'L': (int(500 * scale_x), int(650 * scale_y)),
-        'M': (int(650 * scale_x), int(250 * scale_y)),
-        'N': (int(100 * scale_x), int(450 * scale_y)),
-        'O': (int(900 * scale_x), int(200 * scale_y)),
-        'P': (int(750 * scale_x), int(150 * scale_y)),
-        'Q': (int(300 * scale_x), int(500 * scale_y)),
-        'R': (int(700 * scale_x), int(600 * scale_y)),
-        'S': (int(300 * scale_x), int(400 * scale_y)),
-        'T': (int(500 * scale_x), int(500 * scale_y)),
-        'U': (int(400 * scale_x), int(600 * scale_y)),
-    }
-
-        self.edges = [
-            ('S', 'N'), ('S','Q'), ('S', 'T'), ('S', 'E'),
-            ('N', 'J'), 
-            ('J', 'I'), 
-            ('I', 'U'), 
-            ('U', 'A'), ('U', 'L'),
-            ('Q', 'U'), 
-            ('T', 'Q'), ('T', 'L'), 
-            ('L', 'B'), 
-            ('B', 'H'),
-            ('H', 'D'), 
-            ('D', 'R'), 
-            ('R', 'E'), 
-            ('E', 'G'), ('E', 'F'), ('E', 'K'), 
-            ('F', 'M'), ('F', 'O'), 
-            ('M', 'P'), 
-            ('K', 'O'),
-            ('P', 'C'), 
-            ('O', 'C')
-        ]
-
         self.SURIGAO_DEL_NORTE_DISTANCE = {
             'A': 46.3, 'B': 38.7, 'C': 104, 'D': 55.1, 'E': 65.2, 
             'F': 87.3, 'G': 80.4, 'H': 52.7, 'I': 36.1, 'J': 30.9, 
@@ -182,7 +160,6 @@ class TreeVisualizer:
         elif algorithm_name == "UCS":
             self.set_algorithm_logic(UCSLogic)
         elif algorithm_name == 'A-star':
-            self.init_graph_data()
             self.set_algorithm_logic(AStarLogic)
             self.draw_graph()
         elif algorithm_name == "GBFS":
@@ -231,7 +208,7 @@ class TreeVisualizer:
             self.draw_nodes()
             self.draw_edges()
         
-        self.logic.set_positions(self.positions_tree)
+        # self.logic.set_positions(self.positions_tree)
     # Draws nodes on the canvas
     def draw_nodes(self):
         for node, (x, y) in self.positions_tree.items():
@@ -252,10 +229,7 @@ class TreeVisualizer:
 
     def create_circle(self, x, y, r, node):
         color = self.logic.node_colors.get(node, "white")
-        circle = self.canvas.create_oval(
-            x - r, y - r, x + r, y + r,
-            outline="black", width=2, fill=color
-        )
+        circle = self.canvas.create_oval(x - r, y - r, x + r, y + r,outline="black", width=2, fill=color)
         self.canvas.create_text(x, y, text=node, font=FONT)
         return circle
 
@@ -270,20 +244,41 @@ class TreeVisualizer:
         
     def draw_graph(self):
         for node, (x, y) in self.positions_star.items():
-            self.canvas.create_oval(x - NODE_RADIUS, y - NODE_RADIUS, x + NODE_RADIUS, y + NODE_RADIUS)
-            self.canvas.create_text(x, y, text=node, font=NORMAL_FONT)
+            self.nodes[node] = self.create_circle(x, y, NODE_RADIUS, node)
+
+        self.edges = [
+            ('S', 'N'), ('S', 'Q'), ('S', 'T'), ('S', 'E'),
+            ('N', 'J'), 
+            ('J', 'I'), 
+            ('I', 'U'), 
+            ('U', 'A'), ('U', 'L'),
+            ('Q', 'U'), 
+            ('T', 'Q'), ('T', 'L'), 
+            ('L', 'B'), 
+            ('B', 'H'),
+            ('H', 'D'), 
+            ('D', 'R'), 
+            ('R', 'E'), 
+            ('E', 'G'), ('E', 'F'), ('E', 'K'), 
+            ('F', 'M'), ('F', 'O'), 
+            ('M', 'P'), 
+            ('K', 'O'),
+            ('P', 'C'), 
+            ('O', 'C')
+        ]
 
         for start, end in self.edges:
-            x1, y1 = self.positions_star[start]
-            x2, y2 = self.positions_star[end]
-            self.canvas.create_line(x1, y1, x2, y2, fill="black")
+            start_pos = self.positions_star[start]
+            end_pos = self.positions_star[end]
+            self.canvas.create_line(start_pos[0], start_pos[1], end_pos[0], end_pos[1], width=2)
 
     def update_node_color(self, node, color, animate=True):
         if node in self.nodes:
             self.logic.node_colors[node] = color
             self.canvas.itemconfig(self.nodes[node], fill=color)
             if animate:
-                self.root.update()
+                self.canvas.update()  # Force update of the canvas
+                self.root.update_idletasks()  # Process all pending events
                 time.sleep(time_seconds)
 
     def show_goal_message(self, goal_node):
@@ -317,9 +312,9 @@ class TreeVisualizer:
             self.reset_cost_display()
             self.logic.reset_colors()
 
-        if start_node not in self.positions_tree:
-            messagebox.showerror("Error", "Invalid start node. Please enter a valid node.")
-            return
+        # if start_node not in self.positions_tree or self.positions_star:
+        #     messagebox.showerror("Error", "Invalid start node. Please enter a valid node.")
+        #     return
 
         if goal_node and not self.validate_input(goal_node):
             messagebox.showerror("Error", "Invalid goal node. Please enter a valid node or leave blank.")
@@ -384,7 +379,7 @@ class TreeVisualizer:
                     self.canvas.delete(self.logic.cost_text_ids[node])
             self.logic.cost_text_ids.clear()
 
-    # Update 
+    # Update Cost dispaly
     def update_cost_display(self, node, cost):
         if node in self.nodes:
             if node in self.logic.cost_text_ids:

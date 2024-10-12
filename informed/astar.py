@@ -1,93 +1,92 @@
-from queue import PriorityQueue  
+import heapq
+from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED
 from source import BaseSearchLogic
-
-# Color constants
-COLOR_VISITED = 'green'
-COLOR_VISITING = 'yellow'
-COLOR_NOT_VISITED = 'white'
-COLOR_GOAL = 'red'
-COLOR_PATH = 'blue'
 
 class AStarLogic(BaseSearchLogic):
     def __init__(self, canvas, update_node_color, show_goal_message):
-        # Initialize the base class and set up necessary variables for the A* algorithm
         super().__init__(canvas, update_node_color, show_goal_message)
-        self.edges = {}
-        self.heuristics = {}
-        self.positions = {}
+        self.positions_star = {}
+        self.edges = [
+            ('S', 'N'), ('S', 'Q'), ('S', 'T'), ('S', 'E'),
+            ('N', 'J'), ('J', 'I'), ('I', 'U'), ('U', 'A'), ('U', 'L'),
+            ('Q', 'U'), ('T', 'Q'), ('T', 'L'), ('L', 'B'), ('B', 'H'),
+            ('H', 'D'), ('D', 'R'), ('R', 'E'), ('E', 'G'), ('E', 'F'), ('E', 'K'),
+            ('F', 'M'), ('F', 'O'), ('M', 'P'), ('K', 'O'), ('P', 'C'), ('O', 'C')
+        ]
 
-    def set_custom_costs_and_heuristics(self):
-        # Set path costs for each connection between nodes (edges)
-        self.edges = {
-            ('S', 'N'): 10.6, ('S', 'Q'): 15.3, ('S', 'T'): 14.35, ('S', 'E'): 35.67,
-            ('N', 'J'): 20.7, ('J', 'I'): 35.5, ('I', 'U'): 6.8, ('U', 'A'): 11.3, 
-            ('U', 'L'): 16.3, ('Q', 'U'): 17.0, ('T', 'Q'): 10.0, ('T', 'L'): 9.1,
-            ('L', 'B'): 10.7, ('B', 'H'): 14.3, ('H', 'D'): 10.7, ('D', 'R'): 41.1,
-            ('R', 'E'): 24.8, ('E', 'G'): 15.2, ('E', 'F'): 22.4, ('E', 'K'): 25.6,
-            ('F', 'M'): 11.5, ('F', 'O'): 13.8, ('M', 'P'): 8.4, ('K', 'O'): 11.0,
-            ('P', 'C'): 10.1, ('O', 'C'): 11.8
+        self.SURIGAO_DEL_NORTE_DISTANCE = {
+            'A': 46.3, 'B': 38.7, 'C': 104, 'D': 55.1, 'E': 65.2, 
+            'F': 87.3, 'G': 80.4, 'H': 52.7, 'I': 36.1, 'J': 30.9, 
+            'K': 90.70, 'L': 31.8, 'M': 94.2, 'N': 10.6, 'O': 93.5, 
+            'P': 102, 'Q': 19.3, 'R': 95.7, 'S': 0, 'T': 23.5, 'U': 35.2
         }
 
-        # Set heuristic values for each node (the estimated distance to the goal)
-        self.heuristics = {
-            'S': 0, 'N': 7.98, 'J': 21.70, 'I': 28.06, 'U': 27.67, 'A': 37.57, 'L': 19.16,
-            'Q': 15.30, 'T': 14.35, 'B': 25.95, 'H': 21.20, 'D': 35.67, 'R': 52.22,
-            'E': 61.45, 'G': 72.12, 'F': 54.70, 'K': 67.00, 'M': 59.33, 'O': 67.00,
-            'P': 64.70, 'C': 68.45
+        self.SURIGAO_DEL_NORTE_COST = {
+            'A': 37.57, 'B': 25.95, 'C': 68.45, 'D': 35.67, 'E': 61.45, 
+            'F': 54.70, 'G': 72.12, 'H': 21.20, 'I': 28.06, 'J': 21.70, 
+            'K': 67.00, 'L': 19.16, 'M': 59.33, 'N': 7.98, 'O': 67.00, 
+            'P': 64.70, 'Q': 15.30, 'R': 52.22, 'S': 0, 'T': 14.35, 'U': 27.67
         }
-    # A* algorithm implementation to find the shortest path from start_node to goal_node
+
     def astar(self, start_node, goal_node):
-        self.set_custom_costs_and_heuristics()
-
-        open_list = PriorityQueue()
-        open_list.put((0, start_node))
+        open_list = [(0, start_node)]
+        closed_set = set()
+        g_score = {start_node: 0}
+        f_score = {start_node: self.heuristic(start_node, goal_node)}
         came_from = {}
-        g_score = {node: float('inf') for node in self.positions}
-        g_score[start_node] = 0
 
-        while not open_list.empty():
-            current_f, current_node = open_list.get()
+        while open_list:
+            current_f, current_node = heapq.heappop(open_list)
+            print(f"VISITED: {current_node} with f-score: {current_f}")
 
-            self.update_node_color(current_node, COLOR_VISITING)
-            
             if current_node == goal_node:
-                self.reconstruct_path(came_from, start_node, goal_node)
-                self.show_goal_message()  # Fix: No arguments here
+                print(f"Reached goal: {goal_node}")
+                path = self.reconstruct_path(came_from, start_node, goal_node)
+                self.highlight_path(path)
+                total_cost = g_score[goal_node]
+                total_distance = sum(self.SURIGAO_DEL_NORTE_DISTANCE[node] for node in path)
+                
+                print(f"Path found: {' -> '.join(path)}")
+                print(f"Total cost: {total_cost:.2f}")
+                print(f"Total distance: {total_distance:.2f}")
+                
+                self.show_goal_message(f"Goal reached {goal_node}! Total cost: {total_cost:.2f}, Total distance: {total_distance:.2f}")
                 return
 
+            closed_set.add(current_node)
             self.update_node_color(current_node, COLOR_VISITED)
-            
-            for neighbor, cost in self.get_neighbors(current_node):
-                tentative_g_score = g_score[current_node] + cost
-                if tentative_g_score < g_score[neighbor]:
+
+            for neighbor in self.get_neighbors(current_node):
+                if neighbor in closed_set:
+                    continue
+
+                tentative_g_score = g_score[current_node] + self.SURIGAO_DEL_NORTE_COST[neighbor]
+
+                if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
                     came_from[neighbor] = current_node
                     g_score[neighbor] = tentative_g_score
-                    f_score = g_score[neighbor] + self.heuristics.get(neighbor, float('inf'))
-                    open_list.put((f_score, neighbor))
+                    f_score[neighbor] = g_score[neighbor] + self.heuristic(neighbor, goal_node)
 
-        return
-    
-    # Helper function to get all neighbors of the current node and their path costs
+                    if neighbor not in [i[1] for i in open_list]:
+                        heapq.heappush(open_list, (f_score[neighbor], neighbor))
+                    self.update_node_color(neighbor, COLOR_VISITING)
+
+        print("Goal not reachable")
+        return None
+
+    def heuristic(self, node, goal):
+        return self.SURIGAO_DEL_NORTE_DISTANCE[node]
+
+    def highlight_path(self, path):
+        for node in path:
+            self.update_node_color(node, COLOR_GOAL)
+
     def get_neighbors(self, node):
-        neighbors = []
-        # If the current node is either the start or end of an edge, it's a neighbor
-        for (start, end), cost in self.edges.items():
-            if start == node:
-                neighbors.append((end, cost))
-            elif end == node:
-                neighbors.append((start, cost))
-        return neighbors
-    
-    # Reconstruct and visualize the path from start_node to goal_node using came_from dictionary
-    def reconstruct_path(self, came_from, start_node, goal_node):
-        print(f"Starting Node: {start_node}")
-        current = goal_node
-        path = [goal_node]
-        while current in came_from:
-            current = came_from[current]
-            path.append(current)
-            self.update_node_color(current, COLOR_PATH, animate=True)
+        return [neighbor for edge in self.edges if edge[0] == node or edge[1] == node for neighbor in edge if neighbor != node]
 
-        path.reverse()
-        print("Path:", " -> ".join(path))
-        print(f"-> Goal: {goal_node}")
+    def reconstruct_path(self, came_from, start, goal):
+        total_path = [goal]
+        while goal in came_from:
+            goal = came_from[goal]
+            total_path.append(goal)
+        return total_path[::-1]  # Return reversed path
