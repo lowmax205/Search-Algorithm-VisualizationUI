@@ -22,14 +22,12 @@ class BFSLogic(BaseSearchLogic):
 
             # Check if the current node is the goal
             if current_node == goal_node:
-                test_path = []
                 # Reconstruct and display the path to the goal
-                path, path_costs = reconstruct_path(parents, start_node, goal_node, self.node_costs)
+                path = reconstruct_path(parents, start_node, goal_node, self.node_costs)[0]
                 print(f"Goal node: {current_node}")
                 self.update_node_color(current_node, COLOR_GOAL) 
                 self.show_goal_message(goal_node)
-                test_path = [path]
-                return test_path
+                return path  # Return the path directly, not wrapped in a list
 
             # Mark the current node as visited
             visited.add(current_node) 
@@ -44,5 +42,6 @@ class BFSLogic(BaseSearchLogic):
                     parents[neighbor] = current_node 
                     print(f"Visiting neighbor: {neighbor}")
                     self.update_node_color(neighbor, COLOR_VISITING) 
+
         print("No path found")
         return None  # If no path is found
