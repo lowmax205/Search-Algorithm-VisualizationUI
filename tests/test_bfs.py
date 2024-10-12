@@ -1,5 +1,5 @@
 import pytest
-from uninformed.bfs import BFSLogic
+from ..uninformed.bfs import BFSLogic
 
 class TestBFS:
     @pytest.fixture
