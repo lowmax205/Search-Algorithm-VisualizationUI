@@ -1,8 +1,10 @@
 # Define constants for colors to be used for marking the status of nodes
-COLOR_VISITED = 'green'
+COLOR_START = 'green'
+COLOR_VISITED = 'orange'
 COLOR_VISITING = 'yellow'
 COLOR_NOT_VISITED = 'white'
 COLOR_GOAL = 'red'
+COLOR_PATH = 'blue'
 
 # Heuristic values for nodes (used in GBFS)
 ORIGINAL_HEURISTICS = {
