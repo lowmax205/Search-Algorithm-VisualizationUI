@@ -74,7 +74,7 @@ class DFS_DLSLogic(BaseSearchLogic):
 
         while current_node is not None:
             path.append(current_node)
-            current_node = parents[current_node]  # Move to the parent
+            current_node = parents[current_node]
         
-        path.reverse()  # Reverse the path to get it from start to goal
+        path.reverse()
         return path

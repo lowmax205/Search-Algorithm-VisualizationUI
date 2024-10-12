@@ -15,12 +15,13 @@ from informed.astar import AStarLogic
 
 FONT = ('Arial', 14, 'bold')
 NORMAL_FONT = ('Arial', 12)
+SMALL_FONT = ('Arial', 10)
 NODE_RADIUS = 20
 time_seconds = 0.1
 
 class TreeVisualizer:
     start_count = 0
-    # Initialize the TreeVisualizer with Tkinter.
+    # Constructor for initializing the main window and its components
     def __init__(self, root):
         self.root = root
         self.root.title("Search Algorithm Visualization")
@@ -83,10 +84,10 @@ class TreeVisualizer:
         self.draw_edges()
         self.create_input_ui()
         
+    # Initializes data specific to the graph, such as positions and edges for A star Search
     def init_graph_data(self):
-        scale_x = 400 / 500  # X scaling factor
-        scale_y = 300 / 500   # Y scaling factor
-        # Graph data
+        scale_x = 400 / 500
+        scale_y = 300 / 500
         self.positions_star = {
         'A': (int(350 * scale_x), int(800 * scale_y)),
         'B': (int(600 * scale_x), int(700 * scale_y)),
@@ -132,7 +133,6 @@ class TreeVisualizer:
             ('O', 'C')
         ]
 
-        # Distance and cost data
         self.SURIGAO_DEL_NORTE_DISTANCE = {
             'A': 46.3, 'B': 38.7, 'C': 104, 'D': 55.1, 'E': 65.2, 
             'F': 87.3, 'G': 80.4, 'H': 52.7, 'I': 36.1, 'J': 30.9, 
@@ -156,8 +156,8 @@ class TreeVisualizer:
             'Q': 'Sison', 'R': 'Socorro', 'S': 'Surigao City', 
             'T': 'Tagana-an', 'U': 'Tubod'
         }
-    
-    # Update the algorithm logic when a new algorithm is selected.
+        
+    # Update the selected algorithm and reconfigure the interface
     def update_algorithm(self, algorithm_name):
         
         if algorithm_name in ["BFS", "DFS", "DLS", "IDS", "UCS"]:
@@ -189,15 +189,15 @@ class TreeVisualizer:
             self.set_algorithm_logic(GBFSLogic, clear_heuristics=False)
             self.logic.set_heuristics(self.heuristics)
             self.update_node_heuristics_display()
-            
-    # Set the algorithm logic and clear heuristics if needed.
+
+        if algorithm_name != 'A-star':
+            self.display_node_list(self.main_frame, False)
+
     def set_algorithm_logic(self, LogicClass, clear_heuristics=True):
-        self.clear_canvas()  # Clear the canvas in case A* graph was drawn
-        # Clear node heuristics if specified
+        self.clear_canvas()
         if clear_heuristics:
             self.clear_node_heuristics_display()
-        
-        # Handle logic for UCS
+
         if LogicClass == UCSLogic:
             self.logic = LogicClass(
                 canvas=self.canvas,
@@ -207,22 +207,19 @@ class TreeVisualizer:
             )
             self.canvas.config(width=600, height=500)
             
-            self.draw_nodes()  # Draw the default tree nodes
-            self.draw_edges()  # Draw edges for UCS or other non-A* searches
-        
-        # Handle logic for A* search
+            self.draw_nodes()
+            self.draw_edges()
+
         elif LogicClass == AStarLogic:
             self.logic = LogicClass(
                 canvas=self.canvas,
                 update_node_color=self.update_node_color,
                 show_goal_message=self.show_goal_message
             )
-            # Switch to the larger canvas for A* graph
             self.canvas.config(width=1200, height=700)
-            self.draw_graph()  # Draw the A* graph
-            
-        
-        # For all other algorithms
+            self.draw_graph()
+            self.display_node_list(self.main_frame, True)
+
         else:
             self.logic = LogicClass(
                 canvas=self.canvas,
@@ -230,20 +227,17 @@ class TreeVisualizer:
                 show_goal_message=self.show_goal_message
             )
             self.canvas.config(width=600, height=500)
-            self.clear_canvas()  # Clear any previous drawings
-            self.draw_nodes()  # Draw default tree nodes
-            self.draw_edges()  # Draw edges for other algorithms
+            self.clear_canvas()
+            self.draw_nodes()
+            self.draw_edges()
         
-        # Set positions for the logic class (tree positions)
         self.logic.set_positions(self.positions_tree)
 
-        
-    # Draw the nodes on the canvas with their corresponding labels.
     def draw_nodes(self):
         for node, (x, y) in self.positions_tree.items():
             self.nodes[node] = self.create_circle(x, y, NODE_RADIUS, node)
-    
-    # Draw the edges (connections) between nodes
+
+    # Creates the edges of the tree and draws them on the canvas
     def draw_edges(self):
         edges = [
             ('A', 'B'), ('A', 'C'),
@@ -256,9 +250,7 @@ class TreeVisualizer:
         for start, end in edges:
             self.create_line(*self.positions_tree[start], *self.positions_tree[end], NODE_RADIUS)
 
-    # Create a circle (node) on the canvas with a label.
     def create_circle(self, x, y, r, node):
-        # Set a default color if the node is not found in the node_colors dictionary
         color = self.logic.node_colors.get(node, "white")
         circle = self.canvas.create_oval(
             x - r, y - r, x + r, y + r,
@@ -267,8 +259,6 @@ class TreeVisualizer:
         self.canvas.create_text(x, y, text=node, font=FONT)
         return circle
 
-
-    # Create a line (edge) between two nodes on the canvas.
     def create_line(self, x1, y1, x2, y2, r):
         angle = math.atan2(y2 - y1, x2 - x1)
         start_x = x1 + r * math.cos(angle)
@@ -279,18 +269,15 @@ class TreeVisualizer:
         self.edges.append(line)
         
     def draw_graph(self):
-        # Draw nodes
         for node, (x, y) in self.positions_star.items():
             self.canvas.create_oval(x - NODE_RADIUS, y - NODE_RADIUS, x + NODE_RADIUS, y + NODE_RADIUS)
             self.canvas.create_text(x, y, text=node, font=NORMAL_FONT)
 
-        # Draw edges
         for start, end in self.edges:
             x1, y1 = self.positions_star[start]
             x2, y2 = self.positions_star[end]
             self.canvas.create_line(x1, y1, x2, y2, fill="black")
 
-    # Update the color of a node and animate if specified
     def update_node_color(self, node, color, animate=True):
         if node in self.nodes:
             self.logic.node_colors[node] = color
@@ -299,11 +286,10 @@ class TreeVisualizer:
                 self.root.update()
                 time.sleep(time_seconds)
 
-    # Display a message when the goal node is reached.
     def show_goal_message(self, goal_node):
         messagebox.showinfo("Goal Reached", f"Goal node '{goal_node}' reached!")
-        
-    # Create the UI for inputting start and goal nodes.
+
+    # Create the user input interface for root and goal node selection
     def create_input_ui(self):
         tk.CTkLabel(self.main_frame, text="Start Node:").grid(row=3, column=0, padx=5, pady=5)
         self.start_node_entry = tk.CTkEntry(self.main_frame, width=140)
@@ -316,12 +302,11 @@ class TreeVisualizer:
         self.start_button = tk.CTkButton(self.main_frame, text="Start", command=self.start_function)
         self.start_button.grid(row=5, column=0, columnspan=2, pady=10)
         
-    # Check if a given node is valid based on the defined positions.
     def validate_input(self, node):
         valid_nodes = set(self.positions_tree.keys())
         return node in valid_nodes
-
-    # Start the selected search algorithm and handle input validation.
+    
+    # Validates the user input and starts the search algorithm
     def start_function(self):
         start_node = self.start_node_entry.get().strip().upper()
         goal_node = self.goal_node_entry.get().strip().upper()
@@ -342,7 +327,8 @@ class TreeVisualizer:
         
         uninformed_algorithm = self.selected_uninformed_algorithm.get()
         informed_algorithm = self.selected_informed_algorithm.get()
-
+        
+        # Initialize the logic class based on the selected algorithm
         if uninformed_algorithm != "None" and informed_algorithm == "None":
         
             
@@ -368,13 +354,13 @@ class TreeVisualizer:
                 
             elif informed_algorithm == "A-star":
                 self.draw_graph()
+                self.logic.astar(start_node, goal_node)
 
         else:
             messagebox.showerror("Error", "Please select only one algorithm type: either Uninformed or Informed.")
 
         TreeVisualizer.start_count += 1
 
-    # Display the heuristics values for the nodes on the canvas.
     def update_node_heuristics_display(self):
         for node, (x, y) in self.positions_tree.items():
             if node in self.heuristic_texts:
@@ -386,13 +372,11 @@ class TreeVisualizer:
     def clear_canvas(self):
         self.canvas.delete("all")
     
-    # Clear the heuristic values displayed on the canvas.
     def clear_node_heuristics_display(self):
         for node, text_id in self.heuristic_texts.items():
             self.canvas.delete(text_id)
         self.heuristic_texts.clear()
         
-    # Reset the cost display for UCS.
     def reset_cost_display(self):
         if hasattr(self.logic, 'cost_text_ids') and self.logic.cost_text_ids:
             for node in self.nodes:
@@ -400,53 +384,62 @@ class TreeVisualizer:
                     self.canvas.delete(self.logic.cost_text_ids[node])
             self.logic.cost_text_ids.clear()
 
-    # Update the cost display for UCS on the canvas.
+    # Update 
     def update_cost_display(self, node, cost):
         if node in self.nodes:
             if node in self.logic.cost_text_ids:
                 self.canvas.delete(self.logic.cost_text_ids[node])
             x, y = self.positions_tree[node]
-            text_id = self.canvas.create_text(x, y + NODE_RADIUS + NODE_RADIUS, text=str(cost), font=('Arial', 10))
+            text_id = self.canvas.create_text(x, y + NODE_RADIUS + NODE_RADIUS, text=str(cost), font=SMALL_FONT)
             self.logic.cost_text_ids[node] = text_id
             self.canvas.itemconfig(self.nodes[node], fill=self.logic.node_colors[node])
 
-    def display_node_list(self, frame):
-        # Node list in right frame
-        label = tk.CTkLabel(frame, text="Node List", font=FONT)
-        label.grid(row=0, column=0, columnspan=4, padx=10, pady=5, sticky='we')
+    def display_node_list(self, frame, show_list=True):
+        if not hasattr(self, 'display_frame') or self.display_frame is None:
+            self.display_frame = tk.CTkFrame(frame, width=100, height=500)
+        
+        if not show_list:
+            self.display_frame.grid_remove()
+            return 
 
-        # Sub-headings for node information
-        subt_node = tk.CTkLabel(frame, text="Node", font=NORMAL_FONT)
+        self.display_frame.grid(row=0, column=1, sticky='e')
+
+        for widget in self.display_frame.winfo_children():
+            widget.destroy()
+
+        label = tk.CTkLabel(self.display_frame, text="Node List", font=FONT)
+        label.grid(row=0, column=0, sticky='we')
+
+        subt_node = tk.CTkLabel(self.display_frame, text="Node", font=NORMAL_FONT)
         subt_node.grid(row=1, column=0, padx=5, sticky='w')
 
-        subt_place = tk.CTkLabel(frame, text="Place", font=NORMAL_FONT)
+        subt_place = tk.CTkLabel(self.display_frame, text="Place", font=NORMAL_FONT)
         subt_place.grid(row=1, column=1, padx=5, sticky='w')
 
-        subt_cost = tk.CTkLabel(frame, text="Cost", font=NORMAL_FONT)
+        subt_cost = tk.CTkLabel(self.display_frame, text="Cost", font=NORMAL_FONT)
         subt_cost.grid(row=1, column=2, padx=5, sticky='w')
 
-        subt_distance = tk.CTkLabel(frame, text="Distance", font=NORMAL_FONT)
+        subt_distance = tk.CTkLabel(self.display_frame, text="Distance", font=NORMAL_FONT)
         subt_distance.grid(row=1, column=3, padx=5, sticky='w')
 
-        # Loop through positions to display node information
         for i, (key, _) in enumerate(self.positions_star.items(), start=2):
             node_letter = key
             name = self.SURIGAO_DEL_NORTE.get(key, "N/A")
             cost = self.SURIGAO_DEL_NORTE_COST.get(key, "N/A")
             distance = self.SURIGAO_DEL_NORTE_DISTANCE.get(key, "N/A")
 
-            lbl_node = tk.CTkLabel(frame, font=('Arial', 10), text=node_letter)
+            lbl_node = tk.CTkLabel(self.display_frame, font=SMALL_FONT, text=node_letter)
             lbl_node.grid(row=i, column=0, padx=5, sticky='w')
 
-            lbl_name = tk.CTkLabel(frame, font=('Arial', 10), text=name)
+            lbl_name = tk.CTkLabel(self.display_frame, font=SMALL_FONT, text=name)
             lbl_name.grid(row=i, column=1, padx=5, sticky='w')
 
-            lbl_cost = tk.CTkLabel(frame, font=('Arial', 10), text=cost)
+            lbl_cost = tk.CTkLabel(self.display_frame, font=SMALL_FONT, text=cost)
             lbl_cost.grid(row=i, column=2, padx=5, sticky='w')
 
-            lbl_distance = tk.CTkLabel(frame, font=('Arial', 10), text=f"{distance} km")
+            lbl_distance = tk.CTkLabel(self.display_frame, font=SMALL_FONT, text=f"{distance} km")
             lbl_distance.grid(row=i, column=3, padx=5, sticky='w')
-    
+
     def run(self):
         self.root.mainloop()
 

@@ -61,6 +61,7 @@ class UCSLogic(BaseSearchLogic):
         
     # Reconstruct the path from start_node to goal_node and return it with the path costs.
     def reconstruct_path(self, start_node, goal_node):
+        print(f"Starting Node: {start_node}")
         path = []
         path_costs = []
         current_node = goal_node

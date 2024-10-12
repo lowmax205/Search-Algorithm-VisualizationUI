@@ -51,6 +51,7 @@ class GBFSLogic(BaseSearchLogic):
                     self.update_node_color(neighbor, COLOR_VISITING)
 
     def reconstruct_path(self, parents, start_node, goal_node):
+        print(f"Starting Node: {start_node}")
         path = []
         current = goal_node
         while current is not None:
