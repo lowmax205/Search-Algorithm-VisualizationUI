@@ -2,6 +2,7 @@ from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED, reconstruct_path
 from source import BaseSearchLogic
 
 class IDSLogic(BaseSearchLogic):
+    # Implements Iterative Deepening Search (IDS)
     def ids(self, start_node, goal_node=None):
         depth = 0
         while True:
@@ -12,6 +13,7 @@ class IDSLogic(BaseSearchLogic):
             depth += 1  
             self.reset_colors()  
 
+    # Implements Depth-Limited Search (DLS)
     def dls(self, start_node, goal_node, depth_limit):
         current_level = [(start_node, 0)] 
         next_level = [] 
@@ -19,6 +21,7 @@ class IDSLogic(BaseSearchLogic):
         parents = {start_node: None} 
 
         while current_level or next_level:
+            # Move to next depth level if current level is exhausted
             if not current_level:
                 current_level, next_level = next_level, []
                 if current_level:
@@ -26,13 +29,16 @@ class IDSLogic(BaseSearchLogic):
 
             current_node, depth = current_level.pop(0) 
 
+            # Skip nodes beyond depth limit
             if depth > depth_limit: 
                 continue
             
+            # Process unvisited nodes
             if current_node not in visited:
                 print(f"Visiting: {current_node} at depth {depth}")
                 self.update_node_color(current_node, COLOR_VISITING)  
 
+                # Check if goal node is reached
                 if current_node == goal_node:
                     reconstruct_path(parents, start_node, goal_node, self.node_costs)
                     print(f"Goal node: {current_node}")
@@ -40,9 +46,11 @@ class IDSLogic(BaseSearchLogic):
                     self.show_goal_message(goal_node) 
                     return True
 
+                # Mark node as visited
                 visited.add(current_node) 
                 self.update_node_color(current_node, COLOR_VISITED)
 
+                # Explore neighbors within depth limit
                 if depth < depth_limit:  
                     for neighbor in self.get_neighbors(current_node):
                         if neighbor not in visited:

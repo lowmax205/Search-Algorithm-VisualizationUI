@@ -232,7 +232,7 @@ class TreeVisualizer:
             self.draw_edges()
         
         self.logic.set_positions(self.positions_tree)
-
+    # Draws nodes on the canvas
     def draw_nodes(self):
         for node, (x, y) in self.positions_tree.items():
             self.nodes[node] = self.create_circle(x, y, NODE_RADIUS, node)
