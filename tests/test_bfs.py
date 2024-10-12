@@ -53,7 +53,7 @@ class TestBFS:
         }
 
         # Run BFS
-        path = bfs_logic.bfs('A', 'F')
+        path = bfs_logic.bfs('A', 'O')
 
         # Assert that no path is found
         assert path is None
