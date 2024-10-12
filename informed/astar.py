@@ -1,5 +1,5 @@
 from source import COLOR_START, COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
-from source import BaseSearchLogic, reconstruct_path, highlight_path
+from source import BaseSearchLogic, highlight_path
 import heapq
 
 class AStarLogic(BaseSearchLogic):
@@ -31,6 +31,7 @@ class AStarLogic(BaseSearchLogic):
 
     def astar(self, start_node, goal_node):
         self.update_node_color(goal_node, COLOR_GOAL)
+        self.update_node_color(start_node, COLOR_START)
         open_list = [(0, start_node)]
         closed_set = set()
         g_score = {start_node: 0}

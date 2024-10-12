@@ -276,7 +276,6 @@ class TreeVisualizer:
             self.canvas.itemconfig(self.nodes[node], fill=color)
             if animate:
                 self.canvas.update()  # Force update of the canvas
-                self.root.update_idletasks()  # Process all pending events
                 time.sleep(time_seconds)
 
     def show_goal_message(self, goal_node):

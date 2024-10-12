@@ -1,4 +1,4 @@
-from source import COLOR_START, COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
+from source import COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
 from source import BaseSearchLogic, reconstruct_path, highlight_path
 
 class GBFSLogic(BaseSearchLogic):
