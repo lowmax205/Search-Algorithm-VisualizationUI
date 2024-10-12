@@ -23,11 +23,11 @@ class BFSLogic(BaseSearchLogic):
             # Check if the current node is the goal
             if current_node == goal_node:
                 # Reconstruct and display the path to the goal
-                reconstruct_path(parents, start_node, goal_node, self.node_costs)
+                path, path_costs = reconstruct_path(parents, start_node, goal_node, self.node_costs)
                 print(f"Goal node: {current_node}")
                 self.update_node_color(current_node, COLOR_GOAL) 
                 self.show_goal_message(goal_node) 
-                return
+                return path
 
             # Mark the current node as visited
             visited.add(current_node) 
