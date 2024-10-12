@@ -208,7 +208,6 @@ class TreeVisualizer:
             self.draw_nodes()
             self.draw_edges()
         
-        # self.logic.set_positions(self.positions_tree)
     # Draws nodes on the canvas
     def draw_nodes(self):
         for node, (x, y) in self.positions_tree.items():
@@ -228,8 +227,7 @@ class TreeVisualizer:
             self.create_line(*self.positions_tree[start], *self.positions_tree[end], NODE_RADIUS)
 
     def create_circle(self, x, y, r, node):
-        color = self.logic.node_colors.get(node, "white")
-        circle = self.canvas.create_oval(x - r, y - r, x + r, y + r,outline="black", width=2, fill=color)
+        circle = self.canvas.create_oval(x - r, y - r, x + r, y + r,outline="black", width=2)
         self.canvas.create_text(x, y, text=node, font=FONT)
         return circle
 
@@ -311,14 +309,14 @@ class TreeVisualizer:
         if TreeVisualizer.start_count != 0:
             self.reset_cost_display()
             self.logic.reset_colors()
-
+        
         # if start_node not in self.positions_tree or self.positions_star:
         #     messagebox.showerror("Error", "Invalid start node. Please enter a valid node.")
         #     return
 
-        if goal_node and not self.validate_input(goal_node):
-            messagebox.showerror("Error", "Invalid goal node. Please enter a valid node or leave blank.")
-            return
+        # if goal_node and not self.validate_input(goal_node):
+        #     messagebox.showerror("Error", "Invalid goal node. Please enter a valid node or leave blank.")
+        #     return
         
         uninformed_algorithm = self.selected_uninformed_algorithm.get()
         informed_algorithm = self.selected_informed_algorithm.get()

@@ -1,5 +1,5 @@
-from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED, reconstruct_path
-from source import BaseSearchLogic
+from source import COLOR_START, COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
+from source import BaseSearchLogic, reconstruct_path, highlight_path
 
 class GBFSLogic(BaseSearchLogic):
     # Implements Greedy Best-First Search (GBFS) algorithm
@@ -13,6 +13,7 @@ class GBFSLogic(BaseSearchLogic):
         self.heuristics = heuristics
 
     def greedy_bfs(self, start_node, goal_node=None):
+        self.update_node_color(goal_node, COLOR_GOAL)
         # Initialize GBFS data structures
         open_list = [start_node]
         visited = set()
@@ -24,18 +25,13 @@ class GBFSLogic(BaseSearchLogic):
             open_list.sort(key=lambda node: self.heuristics.get(node, float('inf')))
             current_node = open_list.pop(0)
 
-            # Process unvisited nodes
-            if current_node not in visited:
-                print(f"Visiting: {current_node}")
-                self.update_node_color(current_node, COLOR_VISITING)
-
             # Check if goal node is reached
             if current_node == goal_node:
-                self.update_node_color(current_node, COLOR_GOAL)
                 path, path_costs = reconstruct_path(parents, start_node, goal_node, self.heuristics)
+                highlight_path(self, path, start_node, goal_node)
                 print(f"Goal: {current_node}")
                 self.show_goal_message(goal_node)
-                return
+                return path
 
             # Mark node as visited
             visited.add(current_node)
@@ -57,3 +53,4 @@ class GBFSLogic(BaseSearchLogic):
                     self.update_node_color(neighbor, COLOR_VISITING)
 
         print(f"Goal node '{goal_node}' was not reached.")
+        return None

@@ -1,5 +1,5 @@
-from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED, reconstruct_path
-from source import BaseSearchLogic
+from source import COLOR_START, COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
+from source import BaseSearchLogic, reconstruct_path, highlight_path
 
 class DFS_DLSLogic(BaseSearchLogic):
     # Calculate the depth of the goal node from the start node
@@ -28,6 +28,7 @@ class DFS_DLSLogic(BaseSearchLogic):
 
     # Depth-Limited Search implementation
     def dls(self, start_node, goal_node=None):
+        self.update_node_color(goal_node, COLOR_GOAL)
         # Calculate depth limit or set to infinity if no goal node
         depth_limit = self.calculate_goal_depth(start_node, goal_node) if goal_node else float('inf') 
         stack = [(start_node, 0)] 
@@ -56,11 +57,12 @@ class DFS_DLSLogic(BaseSearchLogic):
 
                 # Check if goal node is reached
                 if current_node == goal_node:
-                    reconstruct_path(parents, start_node, goal_node, self.node_costs)
+                    path, _x = reconstruct_path(parents, start_node, goal_node, self.node_costs)
+                    highlight_path(self, path, start_node, goal_node)
                     print(f"Goal node: {current_node}")
                     self.update_node_color(current_node, COLOR_GOAL) 
-                    self.show_goal_message(goal_node) 
-                    return
+                    self.show_goal_message(goal_node)
+                    return path
 
                 # Mark node as visited
                 visited.add(current_node)
@@ -79,3 +81,6 @@ class DFS_DLSLogic(BaseSearchLogic):
                         parents[neighbor] = current_node 
                         print("Adding neighbor:", neighbor, "at depth:", depth + 1)
                         self.update_node_color(neighbor, COLOR_VISITING) 
+                        
+        print("No path found")
+        return None  # If no path is found

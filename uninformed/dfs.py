@@ -1,9 +1,10 @@
-from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED, reconstruct_path
-from source import BaseSearchLogic
+from source import COLOR_START, COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
+from source import BaseSearchLogic, reconstruct_path, highlight_path
 
 class DFSLogic(BaseSearchLogic):
     # Implementation of Depth-First Search algorithm
     def dfs(self, start_node, goal_node=None):
+        self.update_node_color(goal_node, COLOR_GOAL)
         # Initialize the stack with the start node
         stack = [start_node]
         # Keep track of visited nodes
@@ -14,20 +15,14 @@ class DFSLogic(BaseSearchLogic):
         while stack:
             # Get the next node from the top of the stack
             current_node = stack.pop()
-
-            # Check if the current node has not been visited
-            if current_node not in visited:
-                print(f"Visiting: {current_node}")
-                self.update_node_color(current_node, COLOR_VISITING)
-
             # Check if the current node is the goal
             if current_node == goal_node:
                 # Reconstruct and display the path to the goal
-                reconstruct_path(parents, start_node, goal_node, self.node_costs)
+                path, _x = reconstruct_path(parents, start_node, goal_node, self.node_costs)
+                highlight_path(self, path, start_node, goal_node)
                 print(f"Goal node: {current_node}")
-                self.update_node_color(current_node, COLOR_GOAL) 
                 self.show_goal_message(goal_node) 
-                return
+                return path
 
             # Mark the current node as visited
             visited.add(current_node)  
@@ -42,3 +37,6 @@ class DFSLogic(BaseSearchLogic):
                     parents[neighbor] = current_node
                     print(f"Visiting neighbor: {neighbor}")
                     self.update_node_color(neighbor, COLOR_VISITING) 
+                    
+        print("No path found")
+        return None  # If no path is found

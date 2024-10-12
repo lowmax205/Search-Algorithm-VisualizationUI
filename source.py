@@ -1,3 +1,4 @@
+import time
 # Define constants for colors to be used for marking the status of nodes
 COLOR_START = 'green'
 COLOR_VISITED = 'orange'
@@ -5,7 +6,7 @@ COLOR_VISITING = 'yellow'
 COLOR_NOT_VISITED = 'white'
 COLOR_GOAL = 'red'
 COLOR_PATH = 'blue'
-
+time_seconds = 0.5
 # Heuristic values for nodes (used in GBFS)
 ORIGINAL_HEURISTICS = {
     'A': 0,
@@ -114,3 +115,11 @@ def reconstruct_path(parents, start_node, goal_node, costs=None):
         print(f"Total path cost: {sum(path_costs)}")
 
     return path, path_costs
+
+def highlight_path(self, path, start_node, goal_node):
+    for node in path:
+        self.update_node_color(start_node, COLOR_START)
+        self.update_node_color(goal_node, COLOR_GOAL)
+        if node != start_node and node != goal_node:
+            self.update_node_color(node, COLOR_PATH)
+        time.sleep(time_seconds)

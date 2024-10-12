@@ -1,9 +1,10 @@
-from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED, reconstruct_path
-from source import BaseSearchLogic
+from source import COLOR_START, COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
+from source import BaseSearchLogic, reconstruct_path, highlight_path
 
 class BFSLogic(BaseSearchLogic):
     # Implementation of Breadth-First Search algorithm
     def bfs(self, start_node, goal_node=None):
+        self.update_node_color(goal_node, COLOR_GOAL)
         # Initialize the queue with the start node
         queue = [start_node]  
         # Keep track of visited nodes
@@ -14,20 +15,14 @@ class BFSLogic(BaseSearchLogic):
         while queue:
             # Get the next node from the front of the queue
             current_node = queue.pop(0) 
-
-            # Check if the current node has not been visited
-            if current_node not in visited:
-                print(f"Visiting: {current_node}")
-                self.update_node_color(current_node, COLOR_VISITING) 
-
             # Check if the current node is the goal
-            if current_node == goal_node:
+            if current_node == goal_node: 
                 # Reconstruct and display the path to the goal
                 path = reconstruct_path(parents, start_node, goal_node, self.node_costs)[0]
+                highlight_path(self, path, start_node, goal_node)
                 print(f"Goal node: {current_node}")
-                self.update_node_color(current_node, COLOR_GOAL) 
                 self.show_goal_message(goal_node)
-                return path  # Return the path directly, not wrapped in a list
+                return path
 
             # Mark the current node as visited
             visited.add(current_node) 

@@ -1,6 +1,6 @@
+from source import COLOR_START, COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
+from source import BaseSearchLogic, reconstruct_path, highlight_path
 import heapq
-from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED, COLOR_PATH, COLOR_START
-from source import BaseSearchLogic
 
 class AStarLogic(BaseSearchLogic):
     def __init__(self, canvas, update_node_color, show_goal_message):
@@ -30,6 +30,7 @@ class AStarLogic(BaseSearchLogic):
         }
 
     def astar(self, start_node, goal_node):
+        self.update_node_color(goal_node, COLOR_GOAL)
         open_list = [(0, start_node)]
         closed_set = set()
         g_score = {start_node: 0}
@@ -43,23 +44,21 @@ class AStarLogic(BaseSearchLogic):
             current_f, current_node = heapq.heappop(open_list)
             
             if current_node == goal_node:
-                print(f"\nReached goal: {goal_node}")
                 path = self.reconstruct_path(came_from, start_node, goal_node)
-                self.highlight_path(path)
-                self.update_node_color(current_node, COLOR_GOAL)
-                self.update_node_color(start_node, COLOR_START)
+                highlight_path(self, path, start_node, goal_node)
                 total_cost = g_score[goal_node]
                 total_distance = sum(self.SURIGAO_DEL_NORTE_DISTANCE[node] for node in path)
-                
-                print(f"\nPath found: {' -> '.join(path)}")
+                print(f"\nStarting Node: {start_node}")
+                print("Path found:", " -> ".join(path))
+                print(f"Reached goal: {goal_node}")
                 print(f"Total cost: {total_cost:.2f}")
                 print(f"Total distance: {total_distance:.2f}")
-                
                 self.show_goal_message(f"Goal reached {goal_node}! Total cost: {total_cost:.2f}, Total distance: {total_distance:.2f}")
-                return
+                return path
 
             closed_set.add(current_node)
-            self.update_node_color(current_node, COLOR_VISITED)
+            if current_node != start_node and current_node != goal_node:
+                self.update_node_color(current_node, COLOR_VISITED)
 
             print(f"\nExpanding node {current_node}")
             for neighbor in self.get_neighbors(current_node):
@@ -81,7 +80,9 @@ class AStarLogic(BaseSearchLogic):
 
                     if neighbor not in [i[1] for i in open_list]:
                         heapq.heappush(open_list, (f_score[neighbor], neighbor))
-                    self.update_node_color(neighbor, COLOR_VISITING)
+                        
+                    if neighbor != start_node and neighbor != goal_node:
+                        self.update_node_color(neighbor, COLOR_VISITING)
 
         print("Goal not reachable")
         return None
@@ -89,16 +90,15 @@ class AStarLogic(BaseSearchLogic):
     def heuristic(self, node, goal):
         return self.SURIGAO_DEL_NORTE_DISTANCE[node]
 
-    def highlight_path(self, path):
-        for node in path:
-            self.update_node_color(node, COLOR_PATH)
-
     def get_neighbors(self, node):
         return [neighbor for edge in self.edges if edge[0] == node or edge[1] == node for neighbor in edge if neighbor != node]
 
     def reconstruct_path(self, came_from, start, goal):
-        total_path = [goal]
-        while goal in came_from:
-            goal = came_from[goal]
-            total_path.append(goal)
-        return total_path[::-1]  # Return reversed path
+        path = []
+        current = goal
+        while current != start:
+            path.append(current)
+            current = came_from[current]
+        path.append(start)
+        path.reverse()
+        return path

@@ -1,6 +1,6 @@
+from source import COLOR_START, COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
+from source import BaseSearchLogic, reconstruct_path, highlight_path
 import heapq
-from source import COLOR_VISITING, COLOR_GOAL, COLOR_VISITED, reconstruct_path
-from source import BaseSearchLogic
 
 class UCSLogic(BaseSearchLogic):
     # Implements Uniform Cost Search (UCS) algorithm
@@ -11,6 +11,7 @@ class UCSLogic(BaseSearchLogic):
         self.parents = {}
         
     def ucs(self, start_node, goal_node=None):
+        self.update_node_color(goal_node, COLOR_GOAL)
         # Initialize UCS data structures
         total_travel_cost = 0
         priority_queue = [(0, start_node)]
@@ -33,11 +34,12 @@ class UCSLogic(BaseSearchLogic):
 
             # Check if goal node is reached
             if current_node == goal_node:
-                _x, path_costs = reconstruct_path(self.parents, start_node, goal_node, self.node_costs)
+                path, path_costs = reconstruct_path(self.parents, start_node, goal_node, self.node_costs)
+                highlight_path(self, path, start_node, goal_node)
                 self.update_node_color(current_node, COLOR_GOAL)
                 self.update_cost_display(current_node, current_cost)
                 self.show_goal_message(f"Goal node '{goal_node}' reached. Total path cost: {sum(path_costs)}")
-                return
+                return path
 
             # Mark node as visited
             visited.add(current_node)
