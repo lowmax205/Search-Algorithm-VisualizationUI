@@ -1,11 +1,11 @@
 from source import COLOR_START, COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
-from source import BaseSearchLogic, highlight_path
+from source import BaseSearchLogic
 import heapq
 
 class AStarLogic(BaseSearchLogic):
-    def __init__(self, canvas, update_node_color, show_goal_message):
-        super().__init__(canvas, update_node_color, show_goal_message)
-        
+    def __init__(self, canvas, update_node_color, show_goal_message, node_lines):
+        super().__init__(canvas, update_node_color, show_goal_message, node_lines)
+        self.node_lines = self.node_lines
         self.positions_star = {}
         self.edges = [
             ('S', 'N'), ('S', 'Q'), ('S', 'T'), ('S', 'E'),
@@ -46,7 +46,7 @@ class AStarLogic(BaseSearchLogic):
             
             if current_node == goal_node:
                 path = self.reconstruct_path(came_from, start_node, goal_node)
-                highlight_path(self, path, start_node, goal_node)
+                self.highlight_path(path, start_node, goal_node)
                 total_cost = g_score[goal_node]
                 total_distance = sum(self.SURIGAO_DEL_NORTE_DISTANCE[node] for node in path)
                 print(f"\nStarting Node: {start_node}")

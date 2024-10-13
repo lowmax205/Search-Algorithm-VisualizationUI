@@ -1,10 +1,11 @@
 from source import COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
-from source import BaseSearchLogic, reconstruct_path, highlight_path
+from source import BaseSearchLogic
 
 class GBFSLogic(BaseSearchLogic):
     # Implements Greedy Best-First Search (GBFS) algorithm
-    def __init__(self, canvas, update_node_color, show_goal_message, update_distance_display=None):
-        super().__init__(canvas, update_node_color, show_goal_message)
+    def __init__(self, canvas, update_node_color, show_goal_message, node_lines, update_distance_display=None):
+        super().__init__(canvas, update_node_color, show_goal_message, node_lines)
+        self.node_lines = self.node_lines
         self.heuristics = {}
         self.update_distance_display = update_distance_display
         self.distance_text_ids = {}
@@ -27,8 +28,8 @@ class GBFSLogic(BaseSearchLogic):
 
             # Check if goal node is reached
             if current_node == goal_node:
-                path, path_costs = reconstruct_path(parents, start_node, goal_node, self.heuristics)
-                highlight_path(self, path, start_node, goal_node)
+                path, path_costs = self.reconstruct_path(parents, start_node, goal_node, self.heuristics)
+                self.highlight_path(path, start_node, goal_node)
                 print(f"Goal: {current_node}")
                 self.show_goal_message(goal_node)
                 return path

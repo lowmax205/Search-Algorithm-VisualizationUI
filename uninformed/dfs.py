@@ -1,5 +1,5 @@
 from source import COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
-from source import BaseSearchLogic, reconstruct_path, highlight_path
+from source import BaseSearchLogic
 
 class DFSLogic(BaseSearchLogic):
     # Implementation of Depth-First Search algorithm
@@ -18,8 +18,8 @@ class DFSLogic(BaseSearchLogic):
             # Check if the current node is the goal
             if current_node == goal_node:
                 # Reconstruct and display the path to the goal
-                path, _x = reconstruct_path(parents, start_node, goal_node, self.node_costs)
-                highlight_path(self, path, start_node, goal_node)
+                path, _x = self.reconstruct_path(parents, start_node, goal_node, self.node_costs)
+                self.highlight_path(path, start_node, goal_node)
                 print(f"Goal node: {current_node}")
                 self.show_goal_message(goal_node) 
                 return path

@@ -1,14 +1,15 @@
 from source import COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
-from source import BaseSearchLogic, reconstruct_path, highlight_path
+from source import BaseSearchLogic
 import heapq
 
 class UCSLogic(BaseSearchLogic):
     # Implements Uniform Cost Search (UCS) algorithm
-    def __init__(self, canvas, update_node_color, show_goal_message, update_cost_display):
-        super().__init__(canvas, update_node_color, show_goal_message)
+    def __init__(self, canvas, update_node_color, show_goal_message, update_cost_display, node_lines):
+        super().__init__(canvas, update_node_color, show_goal_message, node_lines)
         self.update_cost_display = update_cost_display
         self.node_costs = {}
         self.parents = {}
+        self.node_lines=self.node_lines
         
     def ucs(self, start_node, goal_node=None):
         self.update_node_color(goal_node, COLOR_GOAL)
@@ -34,8 +35,8 @@ class UCSLogic(BaseSearchLogic):
 
             # Check if goal node is reached
             if current_node == goal_node:
-                path, path_costs = reconstruct_path(self.parents, start_node, goal_node, self.node_costs)
-                highlight_path(self, path, start_node, goal_node)
+                path, path_costs = self.reconstruct_path(self.parents, start_node, goal_node, self.node_costs)
+                self.highlight_path(path, start_node, goal_node)
                 self.update_node_color(current_node, COLOR_GOAL)
                 self.update_cost_display(current_node, current_cost)
                 self.show_goal_message(f"Goal node '{goal_node}' reached. Total path cost: {sum(path_costs)}")

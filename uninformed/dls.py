@@ -1,5 +1,5 @@
 from source import COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
-from source import BaseSearchLogic, reconstruct_path, highlight_path
+from source import BaseSearchLogic
 
 class DFS_DLSLogic(BaseSearchLogic):
     # Calculate the depth of the goal node from the start node
@@ -57,8 +57,8 @@ class DFS_DLSLogic(BaseSearchLogic):
 
                 # Check if goal node is reached
                 if current_node == goal_node:
-                    path, _x = reconstruct_path(parents, start_node, goal_node, self.node_costs)
-                    highlight_path(self, path, start_node, goal_node)
+                    path, _x = self.reconstruct_path(parents, start_node, goal_node, self.node_costs)
+                    self.highlight_path(path, start_node, goal_node)
                     print(f"Goal node: {current_node}")
                     self.update_node_color(current_node, COLOR_GOAL) 
                     self.show_goal_message(goal_node)

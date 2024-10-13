@@ -25,6 +25,7 @@ class TreeVisualizer:
     def __init__(self, root):
         self.root = root
         self.root.title("Search Algorithm Visualization")
+        self.node_lines = {}
 
         tk.set_appearance_mode("dark")
         tk.set_default_color_theme("dark-blue")
@@ -108,7 +109,10 @@ class TreeVisualizer:
         self.update_algorithm("BFS")
         self.draw_nodes()
         self.draw_edges()
+        self.create_legend()
         self.create_input_ui()
+        
+        self.canvas.bind("<Configure>", self.update_legend_position)
         
     # Initializes data specific to the graph, such as positions and edges for A star Search
         self.SURIGAO_DEL_NORTE_DISTANCE = {
@@ -137,7 +141,6 @@ class TreeVisualizer:
         
     # Update the selected algorithm and reconfigure the interface
     def update_algorithm(self, algorithm_name):
-        
         if algorithm_name in ["BFS", "DFS", "DLS", "IDS", "UCS"]:
             self.selected_informed_algorithm.set("None")
         elif algorithm_name in ["GBFS", "A-star"]:
@@ -172,6 +175,7 @@ class TreeVisualizer:
 
     def set_algorithm_logic(self, LogicClass, clear_heuristics=True):
         self.clear_canvas()
+        
         if clear_heuristics:
             self.clear_node_heuristics_display()
 
@@ -180,7 +184,8 @@ class TreeVisualizer:
                 canvas=self.canvas,
                 update_node_color=self.update_node_color,
                 show_goal_message=self.show_goal_message,
-                update_cost_display=self.update_cost_display
+                update_cost_display=self.update_cost_display,
+                node_lines=self.node_lines
             )
             self.canvas.config(width=600, height=500)
             
@@ -191,7 +196,8 @@ class TreeVisualizer:
             self.logic = LogicClass(
                 canvas=self.canvas,
                 update_node_color=self.update_node_color,
-                show_goal_message=self.show_goal_message
+                show_goal_message=self.show_goal_message,
+                node_lines=self.node_lines
             )
             self.canvas.config(width=1200, height=700)
             self.draw_graph()
@@ -201,15 +207,44 @@ class TreeVisualizer:
             self.logic = LogicClass(
                 canvas=self.canvas,
                 update_node_color=self.update_node_color,
-                show_goal_message=self.show_goal_message
+                show_goal_message=self.show_goal_message,
+                node_lines=self.node_lines
             )
             self.canvas.config(width=600, height=500)
             self.clear_canvas()
             self.draw_nodes()
             self.draw_edges()
+    
+    def create_legend(self):
+        legend_items = [
+            ("Start Node", 'green'),
+            ("Goal Node", 'red'),
+            ("Path Node", 'blue'),
+            ("Visited Node", 'orange'),
+            ("Visiting Node", 'yellow'),
+            ("Unvisited Node", 'white')
+        ]
         
+        legend_width = 150
+        legend_height = len(legend_items) * 30 + 10
+        legend_x = 10
+        legend_y = 10
+        
+        self.canvas.create_rectangle(legend_x, legend_y, 
+                                    legend_x + legend_width, legend_y + legend_height, 
+                                    fill='lightgray', outline='black')
+        
+        for i, (label, color) in enumerate(legend_items):
+            y = legend_y + 20 + i * 30
+            self.canvas.create_oval(legend_x + 10, y - 10, 
+                                    legend_x + 30, y + 10, 
+                                    fill=color, outline='black')
+            self.canvas.create_text(legend_x + 40, y, 
+                                    text=label, anchor='w', font=SMALL_FONT)
+    
     # Draws nodes on the canvas
     def draw_nodes(self):
+        self.create_legend()
         for node, (x, y) in self.positions_tree.items():
             self.nodes[node] = self.create_circle(x, y, NODE_RADIUS, node)
 
@@ -223,28 +258,14 @@ class TreeVisualizer:
             ('F', 'J'), ('F', 'K'),
             ('H', 'L'), ('I', 'M'), ('J', 'N')
         ]
-        for start, end in edges:
-            self.create_line(*self.positions_tree[start], *self.positions_tree[end], NODE_RADIUS)
+        self.draw_lines(edges, self.positions_tree)
 
-    def create_circle(self, x, y, r, node):
-        circle = self.canvas.create_oval(x - r, y - r, x + r, y + r,outline="black", width=2)
-        self.canvas.create_text(x, y, text=node, font=FONT)
-        return circle
-
-    def create_line(self, x1, y1, x2, y2, r):
-        angle = math.atan2(y2 - y1, x2 - x1)
-        start_x = x1 + r * math.cos(angle)
-        start_y = y1 + r * math.sin(angle)
-        end_x = x2 - r * math.cos(angle)
-        end_y = y2 - r * math.sin(angle)
-        line = self.canvas.create_line(start_x, start_y, end_x, end_y, arrow=tk.LAST, width=1)
-        self.edges.append(line)
-        
     def draw_graph(self):
+        self.create_legend()
         for node, (x, y) in self.positions_star.items():
             self.nodes[node] = self.create_circle(x, y, NODE_RADIUS, node)
 
-        self.edges = [
+        edges = [
             ('S', 'N'), ('S', 'Q'), ('S', 'T'), ('S', 'E'),
             ('N', 'J'), 
             ('J', 'I'), 
@@ -264,16 +285,42 @@ class TreeVisualizer:
             ('P', 'C'), 
             ('O', 'C')
         ]
+        self.draw_lines(edges, self.positions_star)
 
-        for start, end in self.edges:
-            start_pos = self.positions_star[start]
-            end_pos = self.positions_star[end]
-            self.canvas.create_line(start_pos[0], start_pos[1], end_pos[0], end_pos[1], width=2)
+    def draw_lines(self, edges, positions):
+        for start, end in edges:
+            start_pos = positions[start]
+            end_pos = positions[end]
+            
+            # Calculate the angle between the two points
+            dx = end_pos[0] - start_pos[0]
+            dy = end_pos[1] - start_pos[1]
+            angle = math.atan2(dy, dx)
+            
+            # Adjust start and end points to be on the edge of the circles
+            start_x = start_pos[0] + NODE_RADIUS * math.cos(angle)
+            start_y = start_pos[1] + NODE_RADIUS * math.sin(angle)
+            end_x = end_pos[0] - NODE_RADIUS * math.cos(angle)
+            end_y = end_pos[1] - NODE_RADIUS * math.sin(angle)
+            
+            line = self.canvas.create_line(start_x, start_y, end_x, end_y, width=3)
+            self.node_lines[(start, end)] = line  # Store the line reference
+
+    def create_circle(self, x, y, r, node):
+        circle = self.canvas.create_oval(x - r, y - r, x + r, y + r, outline="black", width=2)
+        self.canvas.create_text(x, y, text=node, font=FONT)
+        return circle
 
     def update_node_color(self, node, color, animate=True):
         if node in self.nodes:
             self.logic.node_colors[node] = color
             self.canvas.itemconfig(self.nodes[node], fill=color)
+            
+            # Update the color of the line to the next node
+            for (start, _), line in self.node_lines.items():
+                if start == node:
+                    self.canvas.itemconfig(line, fill=color)
+            
             if animate:
                 self.canvas.update()  # Force update of the canvas
                 time.sleep(time_seconds)
@@ -427,6 +474,10 @@ class TreeVisualizer:
 
             lbl_distance = tk.CTkLabel(self.display_frame, font=SMALL_FONT, text=f"{distance} km")
             lbl_distance.grid(row=i, column=3, padx=5, sticky='w')
+
+    def update_legend_position(self, event=None):
+        self.canvas.delete("legend")  # Remove old legend
+        self.create_legend()  # Create new legend at updated position
 
     def run(self):
         self.root.mainloop()

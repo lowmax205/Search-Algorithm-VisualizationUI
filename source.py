@@ -27,13 +27,14 @@ ORIGINAL_HEURISTICS = {
 
 class BaseSearchLogic:
     # Initialize with canvas, functions to update node color and show goal message
-    def __init__(self, canvas, update_node_color, show_goal_message):
+    def __init__(self, canvas, update_node_color, show_goal_message, node_lines):
         self.canvas = canvas  
         self.update_node_color = update_node_color 
         self.show_goal_message = show_goal_message 
         self.node_colors = {}  
         self.node_costs = {}
         self.cost_text_ids = {}
+        self.node_lines = node_lines
 
     # Set positions for nodes and initialize their colors to 'not visited'
     def set_positions(self, positions):
@@ -90,36 +91,43 @@ class BaseSearchLogic:
         }
         return neighbors_with_costs.get(node, [])
     
-def reconstruct_path(parents, start_node, goal_node, costs=None):
-    path = []
-    path_costs = []
-    current = goal_node
+    def reconstruct_path(self, parents, start_node, goal_node, costs=None):
+        path = []
+        path_costs = []
+        current = goal_node
 
-    # Ensure current is a valid node in parents
-    while current is not None:
-        path.append(current)
-        if costs is not None:
-            path_costs.append(costs.get(current, 0))
-        # Safeguard against KeyError
-        if current in parents:
-            current = parents[current]
-        else:
-            break  # Exit if there's no parent entry for current
+        # Ensure current is a valid node in parents
+        while current is not None:
+            path.append(current)
+            if costs is not None:
+                path_costs.append(costs.get(current, 0))
+            # Safeguard against KeyError
+            if current in parents:
+                current = parents[current]
+            else:
+                break  # Exit if there's no parent entry for current
 
-    path.reverse()
+        path.reverse()
 
-    print(f"Starting Node: {start_node}")
-    print("Path found:", " -> ".join(path))
-    if costs:
-        print("Path costs:", path_costs)
-        print(f"Total path cost: {sum(path_costs)}")
+        print(f"Starting Node: {start_node}")
+        print("Path found:", " -> ".join(path))
+        if costs:
+            print("Path costs:", path_costs)
+            print(f"Total path cost: {sum(path_costs)}")
 
-    return path, path_costs
+        return path, path_costs
 
-def highlight_path(self, path, start_node, goal_node):
-    for node in path:
-        self.update_node_color(start_node, COLOR_START)
-        self.update_node_color(goal_node, COLOR_GOAL)
-        if node != start_node and node != goal_node:
-            self.update_node_color(node, COLOR_PATH)
-        time.sleep(time_seconds)
+    def highlight_path(self, path, start_node, goal_node):
+        for i, node in enumerate(path):
+            # Update node color
+            self.update_node_color(node, COLOR_PATH if node != start_node and node != goal_node else COLOR_START if node == start_node else COLOR_GOAL)
+            
+            # Update the color of the line to the next node in the path
+            if i < len(path) - 1:
+                next_node = path[i + 1]
+                if (node, next_node) in self.node_lines:
+                    self.canvas.itemconfig(self.node_lines[(node, next_node)], fill=COLOR_PATH)
+                elif (next_node, node) in self.node_lines:
+                    self.canvas.itemconfig(self.node_lines[(next_node, node)], fill=COLOR_PATH)
+            
+            time.sleep(time_seconds)

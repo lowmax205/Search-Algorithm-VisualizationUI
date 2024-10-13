@@ -1,10 +1,10 @@
 from source import COLOR_VISITED, COLOR_VISITING, COLOR_GOAL
-from source import BaseSearchLogic, reconstruct_path, highlight_path
+from source import BaseSearchLogic
 
 class IDSLogic(BaseSearchLogic):
     # Implements Iterative Deepening Search (IDS)
     def ids(self, start_node, goal_node=None):
-        max_depth = 10 # Default depth limit
+        max_depth = 5 # Default depth limit
         for depth in range(max_depth):
             print(f"Exploring with depth limit: {depth}")
             found = self.dls(start_node, goal_node, depth) 
@@ -38,8 +38,8 @@ class IDSLogic(BaseSearchLogic):
 
                 # Check if goal node is reached
                 if current_node == goal_node:
-                    path, _x = reconstruct_path(parents, start_node, goal_node, self.node_costs)
-                    highlight_path(self, path, start_node, goal_node)
+                    path, _x = self.reconstruct_path(parents, start_node, goal_node, self.node_costs)
+                    self.highlight_path(path, start_node, goal_node)
                     print(f"Goal node: {current_node}")
                     self.update_node_color(current_node, COLOR_GOAL) 
                     self.show_goal_message(goal_node)
