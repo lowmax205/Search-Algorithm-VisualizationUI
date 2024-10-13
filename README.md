@@ -19,7 +19,9 @@ The **Uniformed & Informed Search Algorithm** project aims to demonstrate how un
 ## Prerequisites
 
 - [Python](https://www.python.org/downloads/)
-- Necessary libraries (if applicable)
+- [CustomTkinter](https://customtkinter.tomschimansky.com/)
+- [NumPy](https://numpy.org/)
+- [pytest](https://docs.pytest.org/en/stable/)
 
 ## 🛠️ For those who want's to HELP.
 
