@@ -237,7 +237,7 @@ class TreeVisualizer:
         start_y = y1 + r * math.sin(angle)
         end_x = x2 - r * math.cos(angle)
         end_y = y2 - r * math.sin(angle)
-        line = self.canvas.create_line(start_x, start_y, end_x, end_y, arrow=tk.LAST, width=2)
+        line = self.canvas.create_line(start_x, start_y, end_x, end_y, arrow=tk.LAST, width=1)
         self.edges.append(line)
         
     def draw_graph(self):
@@ -309,13 +309,9 @@ class TreeVisualizer:
             self.reset_cost_display()
             self.logic.reset_colors()
         
-        # if start_node not in self.positions_tree or self.positions_star:
-        #     messagebox.showerror("Error", "Invalid start node. Please enter a valid node.")
-        #     return
-
-        # if goal_node and not self.validate_input(goal_node):
-        #     messagebox.showerror("Error", "Invalid goal node. Please enter a valid node or leave blank.")
-        #     return
+        if start_node not in self.positions_tree or start_node not in self.positions_star:
+            messagebox.showerror("Error", "Invalid start node. Please enter a valid node.")
+            return
         
         uninformed_algorithm = self.selected_uninformed_algorithm.get()
         informed_algorithm = self.selected_informed_algorithm.get()

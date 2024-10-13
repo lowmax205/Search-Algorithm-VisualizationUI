@@ -46,7 +46,7 @@ class BaseSearchLogic:
         for node in self.node_colors:
             self.update_node_color(node, COLOR_NOT_VISITED, animate=False)
             
-        if change == True:
+        if change
             print("All nodes have been reset to 'not visited'.")
 
 
