@@ -1,26 +1,34 @@
-# Uniformed & Informed Search Algorithm
+# 🔍 Uniformed & Informed Search Algorithm
 
-## Overview
+## 📊 Overview
 
-The **Uniformed & Informed Search Algorithm** project aims to demonstrate how uniformed search techniques work in problem-solving scenarios. This project is designed for educational purposes, providing a clear understanding of the algorithm's mechanics, advantages, and applications.
+This project demonstrates how uniformed and informed search techniques work in problem-solving scenarios. It's designed for educational purposes, providing a clear understanding of various search algorithms' mechanics, advantages, and applications.
 
-## Key Features
+## 🌟 Key Features
 
-- **Demonstration of Algorithm Mechanics**: Visual representation of how the algorithm explores nodes.
-- **Step-by-Step Execution**: Allows users to follow along as the algorithm processes.
-- **Performance Analysis**: Comparison of different search strategies in terms of time and space complexity.
+- Visual representation of algorithm exploration
+- Step-by-step execution
+- Performance analysis of different search strategies
 
-## Components
+## 🧩 Components
 
-1. **Algorithm Implementation**: Code for BFS, DFS, DLS, GBFS, IDS, UCS and A* Search to demonstrate their functionality.
-2. **Visual Representation**: Graphical interface to visualize the search process.
-3. **Testing Framework**: Tools to validate the algorithm's efficiency and correctness.
+1. Algorithm Implementation (BFS, DFS, DLS, IDS, UCS,GBFS, and A* Search)
+2. Visual Representation
+3. Testing Framework
 
-## Prerequisites
+## 🛠️ Prerequisites
 
-- [Python](https://www.python.org/downloads/)
-- Necessary libraries (if applicable)
+- ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)
+- ![CustomTkinter](https://img.shields.io/badge/-CustomTkinter-FF6F00?style=flat-square&logo=tkinter&logoColor=white)
+- ![NumPy](https://img.shields.io/badge/-NumPy-013243?style=flat-square&logo=numpy&logoColor=white)
+- ![pytest](https://img.shields.io/badge/-pytest-0A9EDC?style=flat-square&logo=pytest&logoColor=white)
 
-## 🛠️ For those who want's to HELP.
+## 🤝 Contributing
 
-Your support and contributions to **Uniformed & Informed Search Algorithm** are greatly appreciated! Feel free to suggest features, report issues, or contribute to the code. Every bit of help counts in making this application better. Thank you!
+Your support and contributions are greatly appreciated! Feel free to:
+
+- Suggest features
+- Report issues
+- Contribute to the code
+
+Every bit of help counts in making this application better. Thank you!
