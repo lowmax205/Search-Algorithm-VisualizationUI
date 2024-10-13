@@ -173,6 +173,7 @@ class TreeVisualizer:
         if algorithm_name != 'A-star':
             self.display_node_list(self.main_frame, False)
 
+    # Set the logic for the selected algorithm and update the canvas
     def set_algorithm_logic(self, LogicClass, clear_heuristics=True):
         self.clear_canvas()
         
@@ -215,6 +216,7 @@ class TreeVisualizer:
             self.draw_nodes()
             self.draw_edges()
     
+    # Create a legend explaining the color coding of nodes
     def create_legend(self):
         legend_items = [
             ("Start Node", 'green'),
@@ -260,6 +262,7 @@ class TreeVisualizer:
         ]
         self.draw_lines(edges, self.positions_tree)
 
+    # Draw the graph for A* algorithm
     def draw_graph(self):
         self.create_legend()
         for node, (x, y) in self.positions_star.items():
@@ -287,6 +290,7 @@ class TreeVisualizer:
         ]
         self.draw_lines(edges, self.positions_star)
 
+    # Draw lines between nodes to represent edges
     def draw_lines(self, edges, positions):
         for start, end in edges:
             start_pos = positions[start]
@@ -306,11 +310,13 @@ class TreeVisualizer:
             line = self.canvas.create_line(start_x, start_y, end_x, end_y, width=3)
             self.node_lines[(start, end)] = line  # Store the line reference
 
+    # Create a circular node on the canvas
     def create_circle(self, x, y, r, node):
         circle = self.canvas.create_oval(x - r, y - r, x + r, y + r, outline="black", width=2)
         self.canvas.create_text(x, y, text=node, font=FONT)
         return circle
 
+    # Update the color of a node and its connecting line
     def update_node_color(self, node, color, animate=True):
         if node in self.nodes:
             self.logic.node_colors[node] = color
@@ -325,6 +331,7 @@ class TreeVisualizer:
                 self.canvas.update()  # Force update of the canvas
                 time.sleep(time_seconds)
 
+    # Display a message when the goal node is reached
     def show_goal_message(self, goal_node):
         messagebox.showinfo("Goal Reached", f"Goal node '{goal_node}' reached!")
 
@@ -341,6 +348,7 @@ class TreeVisualizer:
         self.start_button = tk.CTkButton(self.main_frame, text="Start", command=self.start_function)
         self.start_button.grid(row=5, column=0, columnspan=2, pady=10)
         
+    # Validate if the input node exists in the graph
     def validate_input(self, node):
         valid_nodes = set(self.positions_tree.keys())
         return node in valid_nodes
@@ -396,6 +404,7 @@ class TreeVisualizer:
 
         TreeVisualizer.start_count += 1
 
+    # Update the display of heuristic values for each node
     def update_node_heuristics_display(self):
         for node, (x, y) in self.positions_tree.items():
             if node in self.heuristic_texts:
@@ -404,14 +413,17 @@ class TreeVisualizer:
             self.heuristic_texts[node] = self.canvas.create_text(
                 x, y + NODE_RADIUS + 10, text=str(heuristic_value), font=('Arial', 12)
             )
+    # Clear all elements from the canvas
     def clear_canvas(self):
         self.canvas.delete("all")
     
+    # Clear the displayed heuristic values from the canvas
     def clear_node_heuristics_display(self):
         for _, text_id in self.heuristic_texts.items():
             self.canvas.delete(text_id)
         self.heuristic_texts.clear()
         
+    # Reset the cost display for all nodes
     def reset_cost_display(self):
         if hasattr(self.logic, 'cost_text_ids') and self.logic.cost_text_ids:
             for node in self.nodes:
@@ -429,6 +441,7 @@ class TreeVisualizer:
             self.logic.cost_text_ids[node] = text_id
             self.canvas.itemconfig(self.nodes[node], fill=self.logic.node_colors[node])
 
+    # Display or hide the list of nodes with their details
     def display_node_list(self, frame, show_list=True):
         if not hasattr(self, 'display_frame') or self.display_frame is None:
             self.display_frame = tk.CTkFrame(frame, width=100, height=500)
@@ -475,9 +488,10 @@ class TreeVisualizer:
             lbl_distance = tk.CTkLabel(self.display_frame, font=SMALL_FONT, text=f"{distance} km")
             lbl_distance.grid(row=i, column=3, padx=5, sticky='w')
 
+    # Update the position of the legend when the canvas is resized
     def update_legend_position(self, event=None):
-        self.canvas.delete("legend")  # Remove old legend
-        self.create_legend()  # Create new legend at updated position
+        self.canvas.delete("legend")
+        self.create_legend()
 
     def run(self):
         self.root.mainloop()
