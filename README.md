@@ -12,14 +12,16 @@ This project demonstrates how uniformed and informed search techniques work in p
 
 ## 🧩 Components
 
-1. **Algorithm Implementation**: Code for BFS, DFS, DLS, GBFS, IDS, UCS and A* Search to demonstrate their functionality.
-2. **Visual Representation**: Graphical interface to visualize the search process.
-3. **Testing Framework**: Tools to validate the algorithm's efficiency and correctness.
+1. Algorithm Implementation (BFS, DFS, DLS, IDS, UCS, GBFS and A* Search)
+2. Visual Representation
+3. Testing Framework
 
-## Prerequisites
+## 🛠️ Prerequisites
 
-- [Python](https://www.python.org/downloads/)
-- Necessary libraries (if applicable)
+- ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)
+- ![CustomTkinter](https://img.shields.io/badge/-CustomTkinter-FF6F00?style=flat-square&logo=tkinter&logoColor=white)
+- ![NumPy](https://img.shields.io/badge/-NumPy-013243?style=flat-square&logo=numpy&logoColor=white)
+- ![pytest](https://img.shields.io/badge/-pytest-0A9EDC?style=flat-square&logo=pytest&logoColor=white)
 
 ## 🤝 Contributing
 
