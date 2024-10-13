@@ -18,10 +18,10 @@ This project demonstrates how uniformed and informed search techniques work in p
 
 ## 🛠️ Prerequisites
 
-- ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)
-- ![CustomTkinter](https://img.shields.io/badge/-CustomTkinter-FF6F00?style=flat-square&logo=tkinter&logoColor=white)
-- ![NumPy](https://img.shields.io/badge/-NumPy-013243?style=flat-square&logo=numpy&logoColor=white)
-- ![pytest](https://img.shields.io/badge/-pytest-0A9EDC?style=flat-square&logo=pytest&logoColor=white)
+- ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white) - Python
+- ![CustomTkinter](https://img.shields.io/badge/-CustomTkinter-FF6F00?style=flat-square&logo=tkinter&logoColor=white) - CustomTkinter
+- ![NumPy](https://img.shields.io/badge/-NumPy-013243?style=flat-square&logo=numpy&logoColor=white) - NumPy
+- ![pytest](https://img.shields.io/badge/-pytest-0A9EDC?style=flat-square&logo=pytest&logoColor=white) - pytest
 
 ## 🤝 Contributing
 
