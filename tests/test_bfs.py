@@ -6,8 +6,22 @@ class TestBFS:
     def bfs_logic(self):
         # Create a mock canvas and other necessary objects
         mock_canvas = type('MockCanvas', (), {'create_text': lambda *args, **kwargs: None})()
-        return BFSLogic(mock_canvas, lambda *args: None, lambda *args: None)
+        
+        def mock_update_node_color(*args):
+            pass
+        
+        def mock_show_goal_message(*args):
+            pass
+        
+        mock_node_lines = {}
 
+        return BFSLogic(
+            canvas=mock_canvas,
+            update_node_color=mock_update_node_color,
+            show_goal_message=mock_show_goal_message,
+            node_lines=mock_node_lines
+        )
+        
     def test_bfs_simple_path(self, bfs_logic):
         # Define a simple graph
         bfs_logic.graph = {

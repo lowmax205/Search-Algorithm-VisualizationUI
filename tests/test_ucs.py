@@ -6,16 +6,26 @@ class TestUCS:
     def ucs_logic(self):
         # Create mock objects for the required arguments
         mock_canvas = type('MockCanvas', (), {'create_text': lambda *args, **kwargs: None})()
-        mock_update_node_color = lambda *args: None
-        mock_show_goal_message = lambda *args: None
-        mock_update_cost_display = lambda *args: None
+        mock_canvas = type('MockCanvas', (), {'create_text': lambda *args, **kwargs: None})()
+        
+        def mock_update_node_color(*args):
+            pass
+        
+        def mock_show_goal_message(*args):
+            pass
+        
+        def mock_update_cost_display(*args):
+            pass
+        
+        mock_node_lines = {}
 
         # Initialize UCSLogic with all required arguments
         return UCSLogic(
             canvas=mock_canvas,
             update_node_color=mock_update_node_color,
             show_goal_message=mock_show_goal_message,
-            update_cost_display=mock_update_cost_display
+            update_cost_display=mock_update_cost_display,
+            node_lines=mock_node_lines
         )
 
     def test_ucs_simple_path(self, ucs_logic):

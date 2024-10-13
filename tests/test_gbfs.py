@@ -1,20 +1,25 @@
 import pytest
 from informed.gbfs import GBFSLogic
-from source import ORIGINAL_HEURISTICS
 
 class TestGBFS:
     @pytest.fixture
     def gbfs_logic(self):
         # Create mock objects for the required arguments
         mock_canvas = type('MockCanvas', (), {'create_text': lambda *args, **kwargs: None})()
-        mock_update_node_color = lambda *args: None
-        mock_show_goal_message = lambda *args: None
+        def mock_update_node_color(*args):
+            pass
+        
+        def mock_show_goal_message(*args):
+            pass
+        
+        mock_node_lines = {}
 
         # Initialize GBFSLogic with all required arguments
         gbfs = GBFSLogic(
             canvas=mock_canvas,
             update_node_color=mock_update_node_color,
-            show_goal_message=mock_show_goal_message
+            show_goal_message=mock_show_goal_message,
+            node_lines=mock_node_lines
         )
         
         return gbfs
