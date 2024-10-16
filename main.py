@@ -2,6 +2,7 @@ import customtkinter as tk
 import time
 import math
 from tkinter import messagebox
+from PIL import Image, ImageTk
 from source import ORIGINAL_HEURISTICS as heuristics_list
 
 from uninformed.bfs import BFSLogic
@@ -56,28 +57,52 @@ class TreeVisualizer:
         scale_x = 400 / 500
         scale_y = 300 / 500
         self.positions_star = {
-        'A': (int(350 * scale_x), int(800 * scale_y)),
-        'B': (int(600 * scale_x), int(700 * scale_y)),
-        'C': (int(850 * scale_x), int(50 * scale_y)),
-        'D': (int(700 * scale_x), int(800 * scale_y)),
-        'E': (int(700 * scale_x), int(400 * scale_y)),
-        'F': (int(750 * scale_x), int(300 * scale_y)),
-        'G': (int(900 * scale_x), int(400 * scale_y)),
-        'H': (int(650 * scale_x), int(750 * scale_y)),
-        'I': (int(250 * scale_x), int(650 * scale_y)),
-        'J': (int(150 * scale_x), int(600 * scale_y)),
-        'K': (int(900 * scale_x), int(300 * scale_y)),
-        'L': (int(500 * scale_x), int(650 * scale_y)),
-        'M': (int(650 * scale_x), int(250 * scale_y)),
-        'N': (int(100 * scale_x), int(450 * scale_y)),
-        'O': (int(900 * scale_x), int(200 * scale_y)),
-        'P': (int(750 * scale_x), int(150 * scale_y)),
-        'Q': (int(300 * scale_x), int(500 * scale_y)),
-        'R': (int(700 * scale_x), int(600 * scale_y)),
-        'S': (int(300 * scale_x), int(400 * scale_y)),
-        'T': (int(500 * scale_x), int(500 * scale_y)),
-        'U': (int(400 * scale_x), int(600 * scale_y)),
+        'A': (int(290 * scale_x), int(1100 * scale_y)),
+        'B': (int(400 * scale_x), int(900 * scale_y)),
+        'C': (int(980 * scale_x), int(100 * scale_y)),
+        'D': (int(550 * scale_x), int(1000 * scale_y)),
+        'E': (int(950 * scale_x), int(650 * scale_y)),
+        'F': (int(820 * scale_x), int(450 * scale_y)),
+        'G': (int(1050 * scale_x), int(510 * scale_y)),
+        'H': (int(450 * scale_x), int(950 * scale_y)),
+        'I': (int(200 * scale_x), int(900 * scale_y)),
+        'J': (int(100 * scale_x), int(850 * scale_y)),
+        'K': (int(980 * scale_x), int(400 * scale_y)),
+        'L': (int(330 * scale_x), int(750 * scale_y)),
+        'M': (int(830 * scale_x), int(290 * scale_y)),
+        'N': (int(100 * scale_x), int(600 * scale_y)),
+        'O': (int(1000 * scale_x), int(260 * scale_y)),
+        'P': (int(850 * scale_x), int(180 * scale_y)),
+        'Q': (int(230 * scale_x), int(750 * scale_y)),
+        'R': (int(850 * scale_x), int(800 * scale_y)),
+        'S': (int(200 * scale_x), int(500 * scale_y)),
+        'T': (int(320 * scale_x), int(600 * scale_y)),
+        'U': (int(330 * scale_x), int(900 * scale_y)),
     }
+        # Initializes data specific to the graph, such as positions and edges for A star Search
+        self.SURIGAO_DEL_NORTE_DISTANCE = {
+            'A': 46.3, 'B': 38.7, 'C': 104, 'D': 55.1, 'E': 65.2, 
+            'F': 87.3, 'G': 80.4, 'H': 52.7, 'I': 36.1, 'J': 30.9, 
+            'K': 90.70, 'L': 31.8, 'M': 94.2, 'N': 10.6, 'O': 93.5, 
+            'P': 102, 'Q': 19.3, 'R': 95.7, 'S': 0, 'T': 23.5, 'U': 35.2
+        }
+
+        self.SURIGAO_DEL_NORTE_COST = {
+            'A': 37.57, 'B': 25.95, 'C': 68.45, 'D': 35.67, 'E': 61.45, 
+            'F': 54.70, 'G': 72.12, 'H': 21.20, 'I': 28.06, 'J': 21.70, 
+            'K': 67.00, 'L': 19.16, 'M': 59.33, 'N': 7.98, 'O': 67.00, 
+            'P': 64.70, 'Q': 15.30, 'R': 52.22, 'S': 0, 'T': 14.35, 'U': 27.67
+        }
+
+        self.SURIGAO_DEL_NORTE = {
+            'A': 'Alegria', 'B': 'Bacuag', 'C': 'Burgos', 'D': 'Claver', 
+            'E': 'Dapa', 'F': 'Del Carmen', 'G': 'General Luna', 
+            'H': 'Gigaquit', 'I': 'Mainit', 'J': 'Malimono', 
+            'K': 'Pilar', 'L': 'Placer', 'M': 'San Benito', 
+            'N': 'San Francisco', 'O': 'San Isidro', 'P': 'Santa Monica', 
+            'Q': 'Sison', 'R': 'Socorro', 'S': 'Surigao City', 
+            'T': 'Tagana-an', 'U': 'Tubod'
+        }
 
         self.heuristics = heuristics_list.copy()
         self.heuristic_texts = {} 
@@ -106,38 +131,13 @@ class TreeVisualizer:
         informed_menu.grid(row=2, column=1, padx=5, pady=5)
 
         self.logic = None
-        self.update_algorithm("BFS")
+        self.update_algorithm("A-star")
         self.draw_nodes()
         self.draw_edges()
         self.create_legend()
         self.create_input_ui()
         
         self.canvas.bind("<Configure>", self.update_legend_position)
-        
-    # Initializes data specific to the graph, such as positions and edges for A star Search
-        self.SURIGAO_DEL_NORTE_DISTANCE = {
-            'A': 46.3, 'B': 38.7, 'C': 104, 'D': 55.1, 'E': 65.2, 
-            'F': 87.3, 'G': 80.4, 'H': 52.7, 'I': 36.1, 'J': 30.9, 
-            'K': 90.70, 'L': 31.8, 'M': 94.2, 'N': 10.6, 'O': 93.5, 
-            'P': 102, 'Q': 19.3, 'R': 95.7, 'S': 0, 'T': 23.5, 'U': 35.2
-        }
-
-        self.SURIGAO_DEL_NORTE_COST = {
-            'A': 37.57, 'B': 25.95, 'C': 68.45, 'D': 35.67, 'E': 61.45, 
-            'F': 54.70, 'G': 72.12, 'H': 21.20, 'I': 28.06, 'J': 21.70, 
-            'K': 67.00, 'L': 19.16, 'M': 59.33, 'N': 7.98, 'O': 67.00, 
-            'P': 64.70, 'Q': 15.30, 'R': 52.22, 'S': 0, 'T': 14.35, 'U': 27.67
-        }
-
-        self.SURIGAO_DEL_NORTE = {
-            'A': 'Alegria', 'B': 'Bacuag', 'C': 'Burgos', 'D': 'Claver', 
-            'E': 'Dapa', 'F': 'Del Carmen', 'G': 'General Luna', 
-            'H': 'Gigaquit', 'I': 'Mainit', 'J': 'Malimono', 
-            'K': 'Pilar', 'L': 'Placer', 'M': 'San Benito', 
-            'N': 'San Francisco', 'O': 'San Isidro', 'P': 'Santa Monica', 
-            'Q': 'Sison', 'R': 'Socorro', 'S': 'Surigao City', 
-            'T': 'Tagana-an', 'U': 'Tubod'
-        }
         
     # Update the selected algorithm and reconfigure the interface
     def update_algorithm(self, algorithm_name):
@@ -200,7 +200,7 @@ class TreeVisualizer:
                 show_goal_message=self.show_goal_message,
                 node_lines=self.node_lines
             )
-            self.canvas.config(width=1200, height=700)
+            self.canvas.config(width=1210, height=700)
             self.draw_graph()
             self.display_node_list(self.main_frame, True)
 
@@ -264,6 +264,14 @@ class TreeVisualizer:
 
     # Draw the graph for A* algorithm
     def draw_graph(self):
+        # Load the background image
+        image_path = "map_image.jpg"
+        image = Image.open(image_path)
+        self.background_image = ImageTk.PhotoImage(image)
+
+        # Add the image to the canvas
+        self.canvas.create_image(0, 0, image=self.background_image, anchor='nw')
+        
         self.create_legend()
         for node, (x, y) in self.positions_star.items():
             self.nodes[node] = self.create_circle(x, y, NODE_RADIUS, node)
@@ -444,7 +452,7 @@ class TreeVisualizer:
     # Display or hide the list of nodes with their details
     def display_node_list(self, frame, show_list=True):
         if not hasattr(self, 'display_frame') or self.display_frame is None:
-            self.display_frame = tk.CTkFrame(frame, width=100, height=500)
+            self.display_frame = tk.CTkFrame(frame)
         
         if not show_list:
             self.display_frame.grid_remove()
