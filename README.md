@@ -1,4 +1,4 @@
-# 🔍 Uniformed & Informed Search Algorithm
+# 🏫 School Project: 🔍 Uniformed & Informed Search Algorithm
 
 ## 📊 Overview
 
