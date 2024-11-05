@@ -55,7 +55,6 @@ class AStarLogic(BaseSearchLogic):
 
         while open_list:
             current_f, current_node = heapq.heappop(open_list)
-            
             if current_node == goal_node:
                 path = self.reconstruct_path(came_from, start_node, goal_node)
                 self.highlight_path(path, start_node, goal_node)
