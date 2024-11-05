@@ -52,6 +52,7 @@ class TreeVisualizer:
             'L': (150, 450),
             'M': (250, 450),
             'N': (350, 450)
+            
         }
         
         scale_x = 400 / 500
@@ -131,7 +132,7 @@ class TreeVisualizer:
         informed_menu.grid(row=2, column=1, padx=5, pady=5)
 
         self.logic = None
-        self.update_algorithm("A-star")
+        self.update_algorithm("BFS")
         self.draw_nodes()
         self.draw_edges()
         self.create_legend()
@@ -372,9 +373,6 @@ class TreeVisualizer:
             self.reset_cost_display()
             self.logic.reset_colors()
         
-        if start_node not in self.positions_tree or start_node not in self.positions_star:
-            messagebox.showerror("Error", "Invalid start node. Please enter a valid node.")
-            return
         
         uninformed_algorithm = self.selected_uninformed_algorithm.get()
         informed_algorithm = self.selected_informed_algorithm.get()
@@ -382,7 +380,10 @@ class TreeVisualizer:
         # Initialize the logic class based on the selected algorithm
         if uninformed_algorithm != "None" and informed_algorithm == "None":
         
-            
+            if start_node not in self.positions_tree.keys():
+                messagebox.showerror("Error", "Invalid start node. Please enter a valid node.")
+                return
+        
             if uninformed_algorithm == "BFS":
                 self.logic.bfs(start_node, goal_node)
             elif uninformed_algorithm == "DFS":
@@ -395,6 +396,11 @@ class TreeVisualizer:
                 self.logic.ucs(start_node, goal_node)
 
         elif uninformed_algorithm == "None" and informed_algorithm != "None":
+            
+        
+            if start_node not in self.positions_star.keys():
+                messagebox.showerror("Error", "Invalid start node. Please enter a valid node.")
+                return
             if informed_algorithm == "GBFS":
                 self.heuristics = heuristics_list.copy()
                 if goal_node:
