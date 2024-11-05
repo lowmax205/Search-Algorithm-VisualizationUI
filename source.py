@@ -118,16 +118,24 @@ class BaseSearchLogic:
         return path, path_costs
 
     def highlight_path(self, path, start_node, goal_node):
-        for i, node in enumerate(path):
-            # Update node color
-            self.update_node_color(node, COLOR_PATH if node != start_node and node != goal_node else COLOR_START if node == start_node else COLOR_GOAL)
+        # Reset all lines to default color
+        for _, line in self.node_lines.items():
+            self.canvas.itemconfig(line, fill='black')
             
-            # Update the color of the line to the next node in the path
-            if i < len(path) - 1:
-                next_node = path[i + 1]
-                if (node, next_node) in self.node_lines:
-                    self.canvas.itemconfig(self.node_lines[(node, next_node)], fill=COLOR_PATH)
-                elif (next_node, node) in self.node_lines:
-                    self.canvas.itemconfig(self.node_lines[(next_node, node)], fill=COLOR_PATH)
-            
+        # First color all nodes in the path
+        for node in path:
+            color = COLOR_START if node == start_node else COLOR_GOAL if node == goal_node else COLOR_PATH
+            self.update_node_color(node, color)
+        
+        # Then highlight only the edges between consecutive nodes in the path
+        for i in range(len(path) - 1):
+            current_node = path[i]
+            next_node = path[i + 1]
             time.sleep(time_seconds)
+            # Check both possible orientations of the edge
+            if (current_node, next_node) in self.node_lines:
+                self.canvas.itemconfig(self.node_lines[(current_node, next_node)], fill=COLOR_PATH)
+            elif (next_node, current_node) in self.node_lines:
+                self.canvas.itemconfig(self.node_lines[(next_node, current_node)], fill=COLOR_PATH)
+            
+            

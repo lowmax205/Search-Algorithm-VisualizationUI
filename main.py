@@ -18,7 +18,7 @@ FONT = ('Arial', 14, 'bold')
 NORMAL_FONT = ('Arial', 12)
 SMALL_FONT = ('Arial', 10)
 NODE_RADIUS = 20
-time_seconds = 0.1
+TIME_SECONDS = 0.1
 
 class TreeVisualizer:
     start_count = 0
@@ -34,7 +34,7 @@ class TreeVisualizer:
         self.main_frame = tk.CTkFrame(self.root)
         self.main_frame.pack(pady=10)
 
-        self.canvas = tk.CTkCanvas(self.main_frame, width=600, height=500)
+        self.canvas = tk.CTkCanvas(self.main_frame)
         self.canvas.grid(row=0, column=0, columnspan=2, pady=10)
         
         self.positions_tree = {
@@ -115,21 +115,21 @@ class TreeVisualizer:
         self.selected_informed_algorithm = tk.StringVar()
         self.selected_informed_algorithm.set("None") 
 
-        tk.CTkLabel(self.main_frame, text="Select Uninformed Algorithm:").grid(row=1, column=0, padx=5, pady=5)
+        tk.CTkLabel(self.main_frame, text="Select Uninformed Algorithm:").grid(row=1, column=0, padx=5, pady=5, sticky='e')
         uninformed_menu = tk.CTkOptionMenu(
             self.main_frame,
             variable=self.selected_uninformed_algorithm, 
             values=["None", "BFS", "DFS", "DLS", "IDS", "UCS"], 
             command=self.update_algorithm)
-        uninformed_menu.grid(row=1, column=1, padx=5, pady=5)
+        uninformed_menu.grid(row=1, column=1, padx=5, pady=5,sticky='w')
 
-        tk.CTkLabel(self.main_frame, text="Select Informed Algorithm:").grid(row=2, column=0, padx=5, pady=5)
+        tk.CTkLabel(self.main_frame, text="Select Informed Algorithm:").grid(row=2, column=0, padx=5, pady=5, sticky='e')
         informed_menu = tk.CTkOptionMenu(
             self.main_frame, 
             variable=self.selected_informed_algorithm, 
             values=["None", "GBFS", "A-star"], 
             command=self.update_algorithm)
-        informed_menu.grid(row=2, column=1, padx=5, pady=5)
+        informed_menu.grid(row=2, column=1, padx=5, pady=5,sticky='w')
 
         self.logic = None
         self.update_algorithm("BFS")
@@ -139,6 +139,8 @@ class TreeVisualizer:
         self.create_input_ui()
         
         self.canvas.bind("<Configure>", self.update_legend_position)
+        self.node_labels = {}  # Store node labels for highlighting
+        self.current_highlighted = None  # Track currently highlighted node
         
     # Update the selected algorithm and reconfigure the interface
     def update_algorithm(self, algorithm_name):
@@ -331,14 +333,13 @@ class TreeVisualizer:
             self.logic.node_colors[node] = color
             self.canvas.itemconfig(self.nodes[node], fill=color)
             
-            # Update the color of the line to the next node
-            for (start, _), line in self.node_lines.items():
-                if start == node:
-                    self.canvas.itemconfig(line, fill=color)
+            # Highlight the corresponding node in the list
+            if hasattr(self, 'node_labels') and node in self.node_labels:
+                self.highlight_node_in_list(node, color)
             
             if animate:
-                self.canvas.update()  # Force update of the canvas
-                time.sleep(time_seconds)
+                self.canvas.update()
+                time.sleep(TIME_SECONDS)
 
     # Display a message when the goal node is reached
     def show_goal_message(self, goal_node):
@@ -346,13 +347,13 @@ class TreeVisualizer:
 
     # Create the user input interface for root and goal node selection
     def create_input_ui(self):
-        tk.CTkLabel(self.main_frame, text="Start Node:").grid(row=3, column=0, padx=5, pady=5)
+        tk.CTkLabel(self.main_frame, text="Start Node:").grid(row=3, column=0, padx=5, pady=5,sticky='e')
         self.start_node_entry = tk.CTkEntry(self.main_frame, width=140)
-        self.start_node_entry.grid(row=3, column=1, padx=5, pady=5)
+        self.start_node_entry.grid(row=3, column=1, padx=5, pady=5,sticky='w')
 
-        tk.CTkLabel(self.main_frame, text="Goal Node (Optional):").grid(row=4, column=0, padx=5, pady=5)
+        tk.CTkLabel(self.main_frame, text="Goal Node (Optional):").grid(row=4, column=0, padx=5, pady=5,sticky='e')
         self.goal_node_entry = tk.CTkEntry(self.main_frame, width=140)
-        self.goal_node_entry.grid(row=4, column=1, padx=5, pady=5)
+        self.goal_node_entry.grid(row=4, column=1, padx=5, pady=5,sticky='w')
 
         self.start_button = tk.CTkButton(self.main_frame, text="Start", command=self.start_function)
         self.start_button.grid(row=5, column=0, columnspan=2, pady=10)
@@ -458,49 +459,94 @@ class TreeVisualizer:
     # Display or hide the list of nodes with their details
     def display_node_list(self, frame, show_list=True):
         if not hasattr(self, 'display_frame') or self.display_frame is None:
-            self.display_frame = tk.CTkFrame(frame)
+            self.display_frame = tk.CTkFrame(frame, border_width=2, border_color="green")
         
         if not show_list:
             self.display_frame.grid_remove()
             return 
 
-        self.display_frame.grid(row=0, column=1, sticky='e')
+        # Configure display frame to fill available space
+        self.display_frame.grid(row=0, column=2, rowspan=6, sticky='nsew', padx=10)
+        self.display_frame.configure( width=400)  # Set fixed width
+        self.node_labels.clear()
 
-        for widget in self.display_frame.winfo_children():
-            widget.destroy()
+        # Configure grid weights to allow expansion
+        frame.grid_columnconfigure(2, weight=1)
+        
+        # Configure column widths
+        self.display_frame.grid_columnconfigure(0, minsize=50)  # Node column
+        self.display_frame.grid_columnconfigure(1, minsize=150)  # Place column
+        self.display_frame.grid_columnconfigure(2, minsize=80)  # Cost column
+        self.display_frame.grid_columnconfigure(3, minsize=100)  # Distance column
+        
+        # Create title
+        title_frame = tk.CTkFrame(self.display_frame)
+        title_frame.grid(row=0, column=0, columnspan=4, sticky='ew', pady=(0, 10))
+        
+        label = tk.CTkLabel(title_frame, text="Node List", font=FONT)
+        label.pack(pady=5)
 
-        label = tk.CTkLabel(self.display_frame, text="Node List", font=FONT)
-        label.grid(row=0, column=0, sticky='we')
+        # Create header frame
+        header_frame = tk.CTkFrame(self.display_frame)
+        header_frame.grid(row=1, column=0, columnspan=4, sticky='ew', pady=(0, 5))
 
-        subt_node = tk.CTkLabel(self.display_frame, text="Node", font=NORMAL_FONT)
-        subt_node.grid(row=1, column=0, padx=5, sticky='w')
+        # Headers with specific widths
+        subt_node = tk.CTkLabel(header_frame, text="Node", font=NORMAL_FONT, width=50)
+        subt_node.grid(row=0, column=0, padx=5)
 
-        subt_place = tk.CTkLabel(self.display_frame, text="Place", font=NORMAL_FONT)
-        subt_place.grid(row=1, column=1, padx=5, sticky='w')
+        subt_place = tk.CTkLabel(header_frame, text="Place", font=NORMAL_FONT, width=150)
+        subt_place.grid(row=0, column=1, padx=5)
 
-        subt_cost = tk.CTkLabel(self.display_frame, text="Cost", font=NORMAL_FONT)
-        subt_cost.grid(row=1, column=2, padx=5, sticky='w')
+        subt_cost = tk.CTkLabel(header_frame, text="Cost", font=NORMAL_FONT, width=80)
+        subt_cost.grid(row=0, column=2, padx=5)
 
-        subt_distance = tk.CTkLabel(self.display_frame, text="Distance", font=NORMAL_FONT)
-        subt_distance.grid(row=1, column=3, padx=5, sticky='w')
+        subt_distance = tk.CTkLabel(header_frame, text="Distance", font=NORMAL_FONT, width=100)
+        subt_distance.grid(row=0, column=3, padx=5)
 
-        for i, (key, _) in enumerate(self.positions_star.items(), start=2):
+        # Create scrollable frame for the list
+        scroll_frame = tk.CTkScrollableFrame(self.display_frame, height=860)
+        scroll_frame.grid(row=2, column=0, columnspan=4, sticky='nsew', pady=(0, 10))
+
+        # Configure scroll frame columns
+        scroll_frame.grid_columnconfigure(0, minsize=50)  # Node column
+        scroll_frame.grid_columnconfigure(1, minsize=150)  # Place column
+        scroll_frame.grid_columnconfigure(2, minsize=80)  # Cost column
+        scroll_frame.grid_columnconfigure(3, minsize=100)  # Distance column
+
+        # Add nodes to scrollable frame
+        for i, (key, _) in enumerate(self.positions_star.items()):
+            node_frame = tk.CTkFrame(scroll_frame)
+            node_frame.grid(row=i, column=0, columnspan=4, sticky='ew', pady=2)
+            
             node_letter = key
             name = self.SURIGAO_DEL_NORTE.get(key, "N/A")
             cost = self.SURIGAO_DEL_NORTE_COST.get(key, "N/A")
             distance = self.SURIGAO_DEL_NORTE_DISTANCE.get(key, "N/A")
 
-            lbl_node = tk.CTkLabel(self.display_frame, font=SMALL_FONT, text=node_letter)
-            lbl_node.grid(row=i, column=0, padx=5, sticky='w')
+            # Labels with fixed widths matching the headers
+            lbl_node = tk.CTkLabel(node_frame, text=node_letter, font=NORMAL_FONT, width=50)
+            lbl_node.grid(row=0, column=0, padx=5)
 
-            lbl_name = tk.CTkLabel(self.display_frame, font=SMALL_FONT, text=name)
-            lbl_name.grid(row=i, column=1, padx=5, sticky='w')
+            lbl_name = tk.CTkLabel(node_frame, text=name, font=NORMAL_FONT, width=150)
+            lbl_name.grid(row=0, column=1, padx=5)
 
-            lbl_cost = tk.CTkLabel(self.display_frame, font=SMALL_FONT, text=cost)
-            lbl_cost.grid(row=i, column=2, padx=5, sticky='w')
+            lbl_cost = tk.CTkLabel(node_frame, text=f"{cost:.2f}", font=NORMAL_FONT, width=80)
+            lbl_cost.grid(row=0, column=2, padx=5)
 
-            lbl_distance = tk.CTkLabel(self.display_frame, font=SMALL_FONT, text=f"{distance} km")
-            lbl_distance.grid(row=i, column=3, padx=5, sticky='w')
+            lbl_distance = tk.CTkLabel(node_frame, text=f"{distance:.1f} km", font=NORMAL_FONT, width=100)
+            lbl_distance.grid(row=0, column=3, padx=5)
+
+            self.node_labels[key] = node_frame
+
+    # Add new method for highlighting nodes in the list
+    def highlight_node_in_list(self, node, color):
+        if self.current_highlighted and self.current_highlighted in self.node_labels:
+            self.node_labels[self.current_highlighted].configure(fg_color="transparent")
+        
+        if node in self.node_labels:
+            self.current_highlighted = node
+            self.node_labels[node].configure(fg_color=color)
+            self.node_labels[node].update()
 
     # Update the position of the legend when the canvas is resized
     def update_legend_position(self, event=None):
@@ -513,4 +559,4 @@ class TreeVisualizer:
 if __name__ == "__main__":
     root = tk.CTk() 
     visualizer = TreeVisualizer(root) 
-    visualizer.run() 
+    visualizer.run()
