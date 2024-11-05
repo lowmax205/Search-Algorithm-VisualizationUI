@@ -29,16 +29,25 @@ class TreeVisualizer:
         self.root = root
         self.root.title("Search Algorithm Visualization")
         self.node_lines = {}
+        self.setup_theme()
+        self.setup_main_frame()
+        self.setup_positions()
+        self.setup_graph_data()
+        self.initialize_variables()
+        self.create_algorithm_menus()
+        self.setup_visualization()
 
+    def setup_theme(self):
         tk.set_appearance_mode("dark")
         tk.set_default_color_theme("dark-blue")
 
+    def setup_main_frame(self):
         self.main_frame = tk.CTkFrame(self.root)
         self.main_frame.pack(pady=10)
-
         self.canvas = tk.CTkCanvas(self.main_frame)
         self.canvas.grid(row=0, column=0, columnspan=2, pady=10)
 
+    def setup_positions(self):
         self.positions_tree = {
             "A": (300, 50),
             "B": (200, 150),
@@ -56,8 +65,7 @@ class TreeVisualizer:
             "N": (350, 450),
         }
 
-        scale_x = 400 / 500
-        scale_y = 300 / 500
+        scale_x, scale_y = 400 / 500, 300 / 500
         self.positions_star = {
             "A": (int(290 * scale_x), int(1100 * scale_y)),
             "B": (int(400 * scale_x), int(900 * scale_y)),
@@ -81,7 +89,8 @@ class TreeVisualizer:
             "T": (int(320 * scale_x), int(600 * scale_y)),
             "U": (int(330 * scale_x), int(900 * scale_y)),
         }
-        # Initializes data specific to the graph, such as positions and edges for A star Search
+
+    def setup_graph_data(self):
         self.SURIGAO_DEL_NORTE_DISTANCE = {
             "A": 46.3,
             "B": 38.7,
@@ -154,16 +163,17 @@ class TreeVisualizer:
             "U": "Tubod",
         }
 
+    def initialize_variables(self):
         self.heuristics = heuristics_list.copy()
         self.heuristic_texts = {}
         self.nodes = {}
         self.edges = []
+        self.selected_uninformed_algorithm = tk.StringVar(value="None")
+        self.selected_informed_algorithm = tk.StringVar(value="None")
+        self.node_labels = {}
+        self.current_highlighted = None
 
-        self.selected_uninformed_algorithm = tk.StringVar()
-        self.selected_uninformed_algorithm.set("None")
-        self.selected_informed_algorithm = tk.StringVar()
-        self.selected_informed_algorithm.set("None")
-
+    def create_algorithm_menus(self):
         tk.CTkLabel(self.main_frame, text="Select Uninformed Algorithm:").grid(
             row=1, column=0, padx=5, pady=5, sticky="e"
         )
@@ -186,19 +196,18 @@ class TreeVisualizer:
         )
         informed_menu.grid(row=2, column=1, padx=5, pady=5, sticky="w")
 
+    def setup_visualization(self):
         self.logic = None
         self.update_algorithm("BFS")
         self.draw_nodes()
         self.draw_edges()
         self.create_legend()
         self.create_input_ui()
-
         self.canvas.bind("<Configure>", self.update_legend_position)
-        self.node_labels = {}  # Store node labels for highlighting
-        self.current_highlighted = None  # Track currently highlighted node
 
     # Update the selected algorithm and reconfigure the interface
     def update_algorithm(self, algorithm_name):
+
         if algorithm_name in ["BFS", "DFS", "DLS", "IDS", "UCS"]:
             self.selected_informed_algorithm.set("None")
         elif algorithm_name in ["GBFS", "A-star"]:
@@ -209,6 +218,11 @@ class TreeVisualizer:
 
         if self.logic:
             self.logic.reset_colors()
+
+        # if algorithm_name == "DLS":
+        #     self.create_input_ui(depth_limit=True)
+        # else:
+        #     self.create_input_ui()
 
         if algorithm_name == "BFS":
             self.set_algorithm_logic(BFSLogic)
@@ -258,7 +272,6 @@ class TreeVisualizer:
                 show_goal_message=self.show_goal_message,
                 node_lines=self.node_lines,
             )
-            self.canvas.config(width=1210, height=700)
             self.draw_graph()
             self.display_node_list(self.main_frame, True)
 
@@ -281,7 +294,7 @@ class TreeVisualizer:
             ("Goal Node", "red"),
             ("Path Node", "blue"),
             ("Visited Node", "orange"),
-            ("Visiting Node", "yellow"),
+            ("Visiting Node", "#806000"),
             ("Unvisited Node", "white"),
         ]
 
@@ -345,7 +358,10 @@ class TreeVisualizer:
         image = Image.open(image_path)
         self.background_image = ImageTk.PhotoImage(image)
 
-        # Add the image to the canvas
+        # Configure canvas size to match image dimensions
+        self.canvas.config(width=image.width, height=image.height)
+
+        # Add the image to the canvas to fill entire space
         self.canvas.create_image(0, 0, image=self.background_image, anchor="nw")
 
         self.create_legend()
@@ -429,7 +445,7 @@ class TreeVisualizer:
         messagebox.showinfo("Goal Reached", f"Goal node '{goal_node}' reached!")
 
     # Create the user input interface for root and goal node selection
-    def create_input_ui(self):
+    def create_input_ui(self, depth_limit=False):
         tk.CTkLabel(self.main_frame, text="Start Node:").grid(
             row=3, column=0, padx=5, pady=5, sticky="e"
         )
@@ -442,10 +458,12 @@ class TreeVisualizer:
         self.goal_node_entry = tk.CTkEntry(self.main_frame, width=140)
         self.goal_node_entry.grid(row=4, column=1, padx=5, pady=5, sticky="w")
 
+        self.depth_limit_label = tk.CTkLabel(self.main_frame, text="Depth Limit:")
+        self.depth_limit_entry = tk.CTkEntry(self.main_frame, width=140)
+
         self.start_button = tk.CTkButton(
             self.main_frame, text="Start", command=self.start_function
         )
-        self.start_button.grid(row=5, column=1, pady=10, padx=5, sticky="w")
 
         self.reset_button = tk.CTkButton(
             self.main_frame,
@@ -454,15 +472,39 @@ class TreeVisualizer:
             fg_color="red",
             hover_color="darkred",
         )
-        self.reset_button.grid(row=5, column=0, pady=10, padx=5, sticky="e")
-
+        # if depth_limit is True:
+        #     print("Depth limit is true")
+        #     self.depth_limit_label.grid(row=5, column=0, padx=5, pady=5, sticky="e")
+        #     self.depth_limit_entry.grid(row=5, column=1, padx=5, pady=5, sticky="w")
+        #     self.start_button.grid(row=6, column=1, pady=5, padx=5, sticky="w")
+        #     self.reset_button.grid(row=6, column=0, pady=5, padx=5, sticky="e")
+        # else:
+        #     print("Depth limit is false")
+        #     self.depth_limit_label.grid_forget()
+        #     self.depth_limit_entry.grid_forget()
+        #     self.start_button.grid_forget()
+        #     self.reset_button.grid_forget()
+        #     time.sleep(TIME_SECONDS)
+        #
+        self.start_button.grid(row=5, column=1, pady=5, padx=5, sticky="w")
+        self.reset_button.grid(row=5, column=0, pady=5, padx=5, sticky="e")
         self.root.bind("<Return>", lambda event: self.start_function())
 
     # Reset function to clear the canvas and reset the UI
     def reset_function(self):
         self.clear_canvas()
-        self.draw_nodes()
-        self.draw_edges()
+
+        uninformed_algorithm = self.selected_uninformed_algorithm.get()
+        informed_algorithm = self.selected_informed_algorithm.get()
+
+        # For uninformed algorithms and GBFS
+        if uninformed_algorithm != "None" or informed_algorithm == "GBFS":
+            self.draw_nodes()
+            self.draw_edges()
+        # For A* algorithm
+        elif informed_algorithm == "A-star":
+            self.draw_graph()
+            self.display_node_list(self.main_frame, True)
 
     # Validates the user input and starts the search algorithm
     def start_function(self):
@@ -492,7 +534,8 @@ class TreeVisualizer:
             elif uninformed_algorithm == "DFS":
                 self.logic.dfs(start_node, goal_node)
             elif uninformed_algorithm == "DLS":
-                self.logic.dls(start_node, goal_node)
+                depth_limit = self.depth_limit_entry.get().strip()
+                self.logic.dls(start_node, goal_node, depth_limit)
             elif uninformed_algorithm == "IDS":
                 self.logic.ids(start_node, goal_node)
             elif uninformed_algorithm == "UCS":
@@ -514,6 +557,8 @@ class TreeVisualizer:
                 self.logic.greedy_bfs(start_node, goal_node)
 
             elif informed_algorithm == "A-star":
+                self.display_node_list(self.main_frame, True)
+                time.sleep(TIME_SECONDS)
                 self.draw_graph()
                 self.logic.astar(start_node, goal_node)
 
@@ -565,104 +610,63 @@ class TreeVisualizer:
             self.logic.cost_text_ids[node] = text_id
             self.canvas.itemconfig(self.nodes[node], fill=self.logic.node_colors[node])
 
-    # Display or hide the list of nodes with their details
     def display_node_list(self, frame, show_list=True):
         if not hasattr(self, "display_frame") or self.display_frame is None:
-            self.display_frame = tk.CTkFrame(
-                frame, border_width=2, border_color="green"
-            )
+            self.display_frame = tk.CTkFrame(frame)
 
         if not show_list:
             self.display_frame.grid_remove()
             return
 
-        # Configure display frame to fill available space
         self.display_frame.grid(row=0, column=2, rowspan=6, sticky="nsew", padx=10)
-        self.display_frame.configure(width=400)  # Set fixed width
         self.node_labels.clear()
 
-        # Configure grid weights to allow expansion
-        frame.grid_columnconfigure(2, weight=1)
+        # Title
+        title_label = tk.CTkLabel(self.display_frame, text="Node List", font=FONT)
+        title_label.grid(row=0, column=0, columnspan=4)
 
-        # Configure column widths
-        self.display_frame.grid_columnconfigure(0, minsize=50)  # Node column
-        self.display_frame.grid_columnconfigure(1, minsize=150)  # Place column
-        self.display_frame.grid_columnconfigure(2, minsize=80)  # Cost column
-        self.display_frame.grid_columnconfigure(3, minsize=100)  # Distance column
+        # Headers
+        headers = ["Node", "Place", "Cost", "Distance"]
+        widths = [50, 100, 50, 80]
 
-        # Create title
-        title_frame = tk.CTkFrame(self.display_frame)
-        title_frame.grid(row=0, column=0, columnspan=4, sticky="ew", pady=(0, 10))
+        for col, (header, width) in enumerate(zip(headers, widths)):
+            tk.CTkLabel(
+                self.display_frame, text=header, font=NORMAL_FONT, width=width
+            ).grid(row=1, column=col, padx=5, pady=5)
 
-        label = tk.CTkLabel(title_frame, text="Node List", font=FONT)
-        label.pack(pady=5)
-
-        # Create header frame
-        header_frame = tk.CTkFrame(self.display_frame)
-        header_frame.grid(row=1, column=0, columnspan=4, sticky="ew", pady=(0, 5))
-
-        # Headers with specific widths
-        subt_node = tk.CTkLabel(header_frame, text="Node", font=NORMAL_FONT, width=50)
-        subt_node.grid(row=0, column=0, padx=5)
-
-        subt_place = tk.CTkLabel(
-            header_frame, text="Place", font=NORMAL_FONT, width=150
-        )
-        subt_place.grid(row=0, column=1, padx=5)
-
-        subt_cost = tk.CTkLabel(header_frame, text="Cost", font=NORMAL_FONT, width=80)
-        subt_cost.grid(row=0, column=2, padx=5)
-
-        subt_distance = tk.CTkLabel(
-            header_frame, text="Distance", font=NORMAL_FONT, width=100
-        )
-        subt_distance.grid(row=0, column=3, padx=5)
-
-        # Create scrollable frame for the list
-        scroll_frame = tk.CTkScrollableFrame(self.display_frame, height=860)
-        scroll_frame.grid(row=2, column=0, columnspan=4, sticky="nsew", pady=(0, 10))
-
-        # Configure scroll frame columns
-        scroll_frame.grid_columnconfigure(0, minsize=50)  # Node column
-        scroll_frame.grid_columnconfigure(1, minsize=150)  # Place column
-        scroll_frame.grid_columnconfigure(2, minsize=80)  # Cost column
-        scroll_frame.grid_columnconfigure(3, minsize=100)  # Distance column
-
-        # Add nodes to scrollable frame
-        for i, (key, _) in enumerate(self.positions_star.items()):
-            node_frame = tk.CTkFrame(scroll_frame)
-            node_frame.grid(row=i, column=0, columnspan=4, sticky="ew", pady=2)
-
+        # Data rows
+        for i, (key, _) in enumerate(self.positions_star.items(), start=2):
             node_letter = key
             name = self.SURIGAO_DEL_NORTE.get(key, "N/A")
             cost = self.SURIGAO_DEL_NORTE_COST.get(key, "N/A")
             distance = self.SURIGAO_DEL_NORTE_DISTANCE.get(key, "N/A")
 
-            # Labels with fixed widths matching the headers
-            lbl_node = tk.CTkLabel(
-                node_frame, text=node_letter, font=NORMAL_FONT, width=50
-            )
-            lbl_node.grid(row=0, column=0, padx=5)
+            # Create row frame
+            row_frame = tk.CTkFrame(self.display_frame)
+            row_frame.grid(row=i, column=0, columnspan=4, sticky="ew", pady=2)
+            self.node_labels[key] = row_frame
 
-            lbl_name = tk.CTkLabel(node_frame, text=name, font=NORMAL_FONT, width=150)
-            lbl_name.grid(row=0, column=1, padx=5)
+            # Node data
+            data = [
+                node_letter,
+                name,
+                f"{cost:.2f}" if isinstance(cost, float) else cost,
+                f"{distance:.1f} km" if isinstance(distance, float) else distance,
+            ]
 
-            lbl_cost = tk.CTkLabel(
-                node_frame, text=f"{cost:.2f}", font=NORMAL_FONT, width=80
-            )
-            lbl_cost.grid(row=0, column=2, padx=5)
-
-            lbl_distance = tk.CTkLabel(
-                node_frame, text=f"{distance:.1f} km", font=NORMAL_FONT, width=100
-            )
-            lbl_distance.grid(row=0, column=3, padx=5)
-
-            self.node_labels[key] = node_frame
+            for col, (item, width) in enumerate(zip(data, widths)):
+                tk.CTkLabel(
+                    row_frame,
+                    text=item,
+                    font=NORMAL_FONT,
+                    width=width,
+                    text_color="white",
+                ).grid(row=0, column=col, padx=5)
 
     # highlighting nodes in the list
     def highlight_node_in_list(self, node, color):
         if self.current_highlighted and self.current_highlighted in self.node_labels:
-            self.node_labels[self.current_highlighted].configure(fg_color="transparent")
+            self.node_labels[self.current_highlighted].configure()
 
         if node in self.node_labels:
             self.current_highlighted = node
