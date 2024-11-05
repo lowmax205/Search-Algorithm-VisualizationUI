@@ -44,6 +44,8 @@ class BaseSearchLogic:
     # Reset all node colors to 'not visited'
     def reset_colors(self, change = False):
         self.node_colors = {node: COLOR_NOT_VISITED for node in self.node_colors}
+        for _, line in self.node_lines.items():
+            self.canvas.itemconfig(line, fill='black')
         for node in self.node_colors:
             self.update_node_color(node, COLOR_NOT_VISITED, animate=False)
             
@@ -122,20 +124,21 @@ class BaseSearchLogic:
         for _, line in self.node_lines.items():
             self.canvas.itemconfig(line, fill='black')
             
-        # First color all nodes in the path
-        for node in path:
+        # Animate both node and line color changes
+        for i in range(len(path)):
+            node = path[i]
             color = COLOR_START if node == start_node else COLOR_GOAL if node == goal_node else COLOR_PATH
             self.update_node_color(node, color)
-        
-        # Then highlight only the edges between consecutive nodes in the path
-        for i in range(len(path) - 1):
-            current_node = path[i]
-            next_node = path[i + 1]
+            
+            if i > 0:
+                prev_node = path[i - 1]
+                # Check both possible orientations of the edge
+                if (prev_node, node) in self.node_lines:
+                    self.canvas.itemconfig(self.node_lines[(prev_node, node)], fill=COLOR_PATH)
+                elif (node, prev_node) in self.node_lines:
+                    self.canvas.itemconfig(self.node_lines[(node, prev_node)], fill=COLOR_PATH)
+            
+            self.canvas.update()  # Update the canvas to show the color change
             time.sleep(time_seconds)
-            # Check both possible orientations of the edge
-            if (current_node, next_node) in self.node_lines:
-                self.canvas.itemconfig(self.node_lines[(current_node, next_node)], fill=COLOR_PATH)
-            elif (next_node, current_node) in self.node_lines:
-                self.canvas.itemconfig(self.node_lines[(next_node, current_node)], fill=COLOR_PATH)
             
             

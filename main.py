@@ -347,16 +347,27 @@ class TreeVisualizer:
 
     # Create the user input interface for root and goal node selection
     def create_input_ui(self):
-        tk.CTkLabel(self.main_frame, text="Start Node:").grid(row=3, column=0, padx=5, pady=5,sticky='e')
+        tk.CTkLabel(self.main_frame, text="Start Node:").grid(row=3, column=0, padx=5, pady=5, sticky='e')
         self.start_node_entry = tk.CTkEntry(self.main_frame, width=140)
-        self.start_node_entry.grid(row=3, column=1, padx=5, pady=5,sticky='w')
+        self.start_node_entry.grid(row=3, column=1, padx=5, pady=5, sticky='w')
 
-        tk.CTkLabel(self.main_frame, text="Goal Node (Optional):").grid(row=4, column=0, padx=5, pady=5,sticky='e')
+        tk.CTkLabel(self.main_frame, text="Goal Node (Optional):").grid(row=4, column=0, padx=5, pady=5, sticky='e')
         self.goal_node_entry = tk.CTkEntry(self.main_frame, width=140)
-        self.goal_node_entry.grid(row=4, column=1, padx=5, pady=5,sticky='w')
+        self.goal_node_entry.grid(row=4, column=1, padx=5, pady=5, sticky='w')
 
         self.start_button = tk.CTkButton(self.main_frame, text="Start", command=self.start_function)
-        self.start_button.grid(row=5, column=0, columnspan=2, pady=10)
+        self.start_button.grid(row=5, column=1, pady=10, padx=5, sticky='w')
+
+        self.reset_button = tk.CTkButton(self.main_frame, text="Reset", command=self.reset_function, fg_color="red", hover_color="darkred")
+        self.reset_button.grid(row=5, column=0, pady=10, padx=5, sticky='e')
+
+        self.root.bind('<Return>', lambda event: self.start_function())
+
+    # Reset function to clear the canvas and reset the UI
+    def reset_function(self):
+        self.clear_canvas()
+        self.draw_nodes()
+        self.draw_edges()
         
     # Validate if the input node exists in the graph
     def validate_input(self, node):
@@ -538,7 +549,7 @@ class TreeVisualizer:
 
             self.node_labels[key] = node_frame
 
-    # Add new method for highlighting nodes in the list
+    # highlighting nodes in the list
     def highlight_node_in_list(self, node, color):
         if self.current_highlighted and self.current_highlighted in self.node_labels:
             self.node_labels[self.current_highlighted].configure(fg_color="transparent")
