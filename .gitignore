@@ -1,11 +1,26 @@
+# Python cache files
 __pycache__/
-informed/
-tests/
-uninformed/
-testing/
-SAMPLE.png
-main-backup.py
-Search Algorithm Visualization.spec
-build/
-dist/
-SourceCode/
+
+# Algorithm implementation directories
+# Informed search algorithms implementation
+informed/    
+# Uninformed search algorithms implementation
+uninformed/  
+# Test files and test cases
+tests/       
+# Additional testing resources
+testing/     
+
+# Build and distribution files
+# Build artifacts
+build/  
+# Distribution packages     
+dist/        
+# Version-specific source code
+SourceCodeVersion/ 
+# PyInstaller spec file
+SearchAlgoViz.spec  
+
+# Project artifacts    
+# Version information file
+version_info.txt    
