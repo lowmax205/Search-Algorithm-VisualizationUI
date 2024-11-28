@@ -5,6 +5,9 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 from source import ORIGINAL_HEURISTICS as heuristics_list
 
+import sys
+import os
+
 from uninformed.bfs import BFSLogic
 from uninformed.dfs import DFSLogic
 from uninformed.dls import DFS_DLSLogic
@@ -21,6 +24,15 @@ NODE_RADIUS = 20
 TIME_SECONDS = 0.1
 
 
+def resource_path(relative_path):
+    # Get the absolute path to resources
+    base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
+
+icon_path = resource_path("Searching.ico")
+
+
 class TreeVisualizer:
     start_count = 0
 
@@ -28,6 +40,7 @@ class TreeVisualizer:
     def __init__(self, root):
         self.root = root
         self.root.title("Search Algorithm Visualization")
+        self.root.iconbitmap(icon_path)
         self.node_lines = {}
         self.setup_theme()
         self.setup_main_frame()
