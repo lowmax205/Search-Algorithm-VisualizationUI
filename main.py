@@ -30,7 +30,7 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-icon_path = resource_path("Searching.ico")
+icon_path = resource_path("assets/Searching.ico")
 
 
 class TreeVisualizer:
@@ -367,7 +367,7 @@ class TreeVisualizer:
     # Draw the graph for A* algorithm
     def draw_graph(self):
         # Load the background image
-        image_path = "map_image.jpg"
+        image_path = "assets/map_image.jpg"
         image = Image.open(image_path)
         self.background_image = ImageTk.PhotoImage(image)
 
