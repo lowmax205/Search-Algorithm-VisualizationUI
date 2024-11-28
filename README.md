@@ -5,7 +5,7 @@
 This project demonstrates how uniformed and informed search techniques work in problem-solving scenarios. It's designed for educational purposes, providing a clear understanding of various search algorithms' mechanics, advantages, and applications.
 
 ![Python Version](https://img.shields.io/badge/Python-%3E%3D3.10-3776AB?style=for-the-badge&logo=python)
-![Status](https://img.shields.io/badge/Status-Ongoing-orange?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen?style=for-the-badge)
 
 ---
 
